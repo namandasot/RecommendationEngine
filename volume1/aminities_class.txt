@@ -1,0 +1,34 @@
+amphitheatre|Recreational Activities
+badminton court|Outdoor Sports
+basket ball court|Outdoor Sports
+bicycle track|Outdoor Sports
+children's play area|Garden
+club house|Recreational Activities
+cricketnet|Outdoor Sports
+foot ball|Outdoor Sports
+garden|Garden
+gas line|Gas Pipelines
+golf|Outdoor Sports
+gym|Gym
+health facilities|Health Care
+indoor games|Recreational Activities
+jacuzzi|Recreational Activities
+jogging track|Outdoor Sports
+landscape garden|Garden
+library|Recreational Activities
+lush green lawns|Garden
+outdoor games|Outdoor Sports
+park|Garden
+parking|Parking
+party hall|Recreational Activities
+podium car parking|Parking
+pool table|Recreational Activities
+sauna|Recreational Activities
+skating rink|Outdoor Sports
+spa|Recreational Activities
+squash court|Outdoor Sports
+swimming pool|Swimming Pool
+tennis court|Outdoor Sports
+vastu compliant|Vastu
+volleyball|Outdoor Sports
+yoga|Gym
