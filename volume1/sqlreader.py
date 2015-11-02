@@ -3,6 +3,7 @@ import numpy as np
 import MySQLdb
 import time
 import datetime
+import os
 
 class DataCleaner:
     def __init__(self):
@@ -10,7 +11,8 @@ class DataCleaner:
         self.workable_data, self.project_city = self.get_workable_data()
 
     def aminites_class_reader(self):
-        fil = open('aminities_class.txt').read().strip().split('\n')
+        amneties_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'aminities_class.txt')
+        fil = open(amneties_file).read().strip().split('\n')
         aminity_class = {}
         for line in fil:
             line = line.split('|')
@@ -40,7 +42,7 @@ class DataCleaner:
         project_city_dict = {}
         aminitie = []
         category = []
-        db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="hdfcred")
+        db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
         cur = db.cursor()
         #cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Config_Type, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, PricePerUnit, amenities from REDADMIN2.all_project_info")
         cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
@@ -110,11 +112,11 @@ if __name__ == '__main__':
     mum = []
     a = time.time()
     DC = DataCleaner()
-    print time.time() - a
-    b = time.time()
-    res = DC.get_recommendations(7)
-    print time.time() - b
-    print res
+    a = DC.get_recommendations(7)
+    print a
     #for ele in DC.workable_data:
     #    if ele == 'Mumbai':
     #        print DC.workable_data[ele]
+    
+    
+    
