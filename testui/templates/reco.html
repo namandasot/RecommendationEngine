@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reco Test</title>
+</head>
+<body>
+{{project.project_config_no}}
+<br>
+
+<ul>
+{% for recoProject in recoProjects %}
+    <li>{{ recoProject.project_config_no }}</li>
+{% endfor %}
+</ul>
+
+
+</body>
+</html>
