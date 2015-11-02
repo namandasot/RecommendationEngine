@@ -1,6 +1,7 @@
 import MySQLdb
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
+import os
 
 class DataCleaner:
     def __init__(self):
@@ -8,7 +9,10 @@ class DataCleaner:
         self.workable_data, self.project_city = self.get_workable_data()
         
     def aminites_class_reader(self):
-        fil = open('aminities_class.txt').read().strip().split('\n')
+        
+        amneties_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'aminities_class.txt')
+        
+        fil = open(amneties_file).read().strip().split('\n')
         aminity_class = {}
         for line in fil:
             line = line.split('|')
@@ -29,7 +33,7 @@ class DataCleaner:
         project_city_dict = {}
         aminitie = []
         category = []
-        db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="hdfcred")
+        db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
         cur = db.cursor()
         #cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Config_Type, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, PricePerUnit, amenities from REDADMIN2.all_project_info")
         cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, PricePerUnit, amenities from REDADMIN2.all_project_info")
@@ -80,24 +84,30 @@ class DataCleaner:
             organised_data[city]['attributes'] = x_normed
         return organised_data, project_city_dict
 
-    def simple_knn_recommender(self, project_config_No):
-        #city = self.project_city(project_config_No)
-        city = 'Mumbai'
+    def simple_knn_recommender(self, city):
+
         X = self.workable_data[city]['attributes']
         nbrs = NearestNeighbors(n_neighbors=11, algorithm='ball_tree').fit(X)
         distances, indices = nbrs.kneighbors(X)
         recomendations = {}
         for row in indices:
             recomendations[self.workable_data[city]['project_id'][row[0]]] = [self.workable_data[city]['project_id'][x] for x in row[1:]]
-        for row in recomendations:
-            print row, recomendations[row]
         return recomendations
+
+    def get_recommendations(self, project_config_No):
+        city = self.project_city.get(project_config_No)
+        Recommendation_dict = self.simple_knn_recommender(city)
+        return Recommendation_dict.get(project_config_No)
 
 
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    DC.simple_knn_recommender(10)
+    a = DC.get_recommendations(7)
+    print a
     #for ele in DC.workable_data:
     #    if ele == 'Mumbai':
     #        print DC.workable_data[ele]
+    
+    
+    
