@@ -5,7 +5,7 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import os
 from volume1.sqlreader import DataCleaner
-
+# test comment
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
