@@ -4,87 +4,111 @@
 <meta charset="UTF-8">
 <title>Reco Test</title>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 <style type="text/css">
-      html, body { height: 100%; margin: 0; padding: 0; }
-      #map { height: 90%; width: 70%; margin-left: auto; margin-right: auto;}
-    </style>
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	height: 100%;
+	width: 70%;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
 
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+	integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+	crossorigin="anonymous">
 
 <!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
+	integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX"
+	crossorigin="anonymous">
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+	integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+	crossorigin="anonymous"></script>
 
 
 </head>
 <body>
-<div id="map" ></div>
-<br>
-<div>
-	<table class="table table-hover table-bordered table-striped">
-		<tr>
-			<th>Sr. No.</th>
-			<th>project config no</th>
-			<th>Locality</th>
-			<th>built up area</th>
-			<th>Possession Date</th>
-			<th>no of balc.</th>
-			<th>no of floor</th>
-			<th>no of bed</th>
-			<th>no of bath</th>
+	<div id="map"></div>
+	<br>
+	<div>
+		<table class="table table-hover table-bordered table-striped">
+			<tr>
+				<th>Sr. No.</th>
+				<th>project config no</th>
+				<th>Locality</th>
+				<th>built up area</th>
+				<th>Possession Date</th>
+				<th>no of balc.</th>
+				<th>no of floor</th>
+				<th>no of bed</th>
+				<th>no of bath</th>
 
-			<th>price (in Lac)</th>
-			<th>category</th>
+				<th>price (in Lac)</th>
+				<th>category</th>
 
-			<th>amenities</th>
-		</tr>
-		
-		<tr class="success"><b>
-			<td></td>
-			<td>{{project.project_config_no}}</td>
-			<td>{{project.project_area_name}}, {{project.project_suburb_name}}</td>
-			<td>{{project.built_up_area}}</td>
-			<td>{{project.possession_text}}</td>
-			<td>{{project.no_of_balconies}}</td>
-			<td>{{project.no_of_floors}}</td>
-			<td>{{project.no_of_bedroom}}</td>
-			<td>{{project.no_of_bathroom}}</td>
+				<th>amenities</th>
+			</tr>
 
-			<td>{% widthratio project.minimum_price 100000 1 %}</td>
-			<td>{{project.category}}</td>
+			<tr class="success">
+				<b>
+					<td></td>
+				<td>{{project.project_config_no}}</td>
+				<td>{{project.project_area_name}},
+					{{project.project_suburb_name}}</td>
+				<td>{{project.built_up_area}}</td>
+				<td>{{project.possession_text}}</td>
+				<td>{{project.no_of_balconies}}</td>
+				<td>{{project.no_of_floors}}</td>
+				<td>{{project.no_of_bedroom}}</td>
+				<td>{{project.no_of_bathroom}}</td>
 
-			<td>{{project.amenities}}</td>	
-		</b></tr>
+				<td>{% widthratio project.minimum_price 100000 1 %}</td>
+				<td>{{project.category}}</td>
 
-	{% for recoProject in recoProjects %}
-		<tr>
-			<td>{{forloop.counter}}</td>
-			<td>{{recoProject.project_config_no}}</td>
-			<td>{{recoProject.project_area_name}}, {{recoProject.project_suburb_name}}</td>
+				<td>{{project.amenities}}</td>
+				</b>
+			</tr>
 
-			<td>{{recoProject.built_up_area}}</td>
-			<td>{{recoProject.possession_text}}</td>
-			
-			<td>{{recoProject.no_of_balconies}}</td>
-			<td>{{recoProject.no_of_floors}}</td>
-			<td>{{recoProject.no_of_bedroom}}</td>
-			<td>{{recoProject.no_of_bathroom}}</td>
+			{% for recoProject in recoProjects %}
+			<tr>
+				<td>{{forloop.counter}}</td>
+				<td>{{recoProject.project_config_no}}</td>
+				<td>{{recoProject.project_area_name}},
+					{{recoProject.project_suburb_name}}</td>
 
-			<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
-			<td>{{recoProject.category}}</td>
+				<td>{{recoProject.built_up_area}}</td>
+				<td>{{recoProject.possession_text}}</td>
 
-			<td>{{recoProject.amenities}}</td>
-		</tr>
-		
-	{% endfor %}
-	</table>
-</div>
-<!-- {{project.project_config_no}}
+				<td>{{recoProject.no_of_balconies}}</td>
+				<td>{{recoProject.no_of_floors}}</td>
+				<td>{{recoProject.no_of_bedroom}}</td>
+				<td>{{recoProject.no_of_bathroom}}</td>
+
+				<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
+				<td>{{recoProject.category}}</td>
+
+				<td>{{recoProject.amenities}}</td>
+			</tr>
+
+			{% endfor %}
+		</table>
+	</div>
+	<!-- {{project.project_config_no}}
 <br>
 
 <ul>
@@ -177,7 +201,7 @@
 
 
 
-    <script type="text/javascript">
+	<script type="text/javascript">
 
 
 function initMap() {
@@ -186,9 +210,44 @@ function initMap() {
 	    zoom: 10,
 	    center: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 	  });
+	  
+	  var markerMain = new google.maps.Marker({
+		    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+		    map: map,
+		  });
+	      
+		  var infowindow = new google.maps.InfoWindow({
+			  content: '<div>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+			  zIndex: 100,
+			  maxWidth: 100,
+		  });
+		  
+		  markerMain.addListener('click', function() {
+			    infowindow.open(map, markerMain);
+		  });
+		  
+	  
+		  {% for recoProject in recoProjects %}
+		  
+		  var marker{{forloop.counter}} = new google.maps.Marker({
+			    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
+			    map: map,
+			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|FF0000|000000'
+		  });
+		  
+		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
+			    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
+		
+		  });
+		  
+		  marker{{forloop.counter}}.addListener('click', function() {
+			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+		  });
+		  
+		  {% endfor %}
 
 	  var pinIcon = new google.maps.MarkerImage(
-			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|007500",
+			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|CCCCCC",
 			    null, /* size is determined at runtime */
 			    null, /* origin is 0,0 */
 			    null, /* anchor is bottom center of the scaled image */
@@ -214,44 +273,11 @@ function initMap() {
 	  
 	  {% endfor %}
 	  
-	  {% for recoProject in recoProjects %}
-	  
-	  var marker{{forloop.counter}} = new google.maps.Marker({
-		    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
-		    map: map,
-		    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|FF0000|000000'
-	  });
-	  
-	  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-		    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
-	
-	  });
-	  
-	  marker{{forloop.counter}}.addListener('click', function() {
-		    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
-	  });
-	  
-	  {% endfor %}
-	  
-	  var markerMain = new google.maps.Marker({
-	    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
-	    map: map,
-	  });
-      
-	  var infowindow = new google.maps.InfoWindow({
-		  content: '<div>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
-		  zIndex: 100,
-		  maxWidth: 100,
-	  });
-	  
-	  markerMain.addListener('click', function() {
-		    infowindow.open(map, markerMain);
-	  });
-	  
 	}
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7tofYrH2q-yLyiftwbZgOHpMzox3ynPs&callback=initMap">
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7tofYrH2q-yLyiftwbZgOHpMzox3ynPs&callback=initMap">
     </script>
 
 
