@@ -12,6 +12,7 @@ def showRecoProjects(request,project_config_id):
     recoProjects = []
     for recoProjectsId in recoProjectsIds :
         recoProjects.append(AllProjectInfo.objects.get(project_config_no=recoProjectsId))
-    print recoProjects
-    context = {'project' : project, 'recoProjects' : recoProjects}
+    allProperties = AllProjectInfo.objects.filter(project_city_name=project.project_city_name)
+
+    context = {'project' : project, 'recoProjects' : recoProjects, 'allProperties' : allProperties}
     return render(request, 'reco.html', context)

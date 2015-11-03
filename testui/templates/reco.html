@@ -8,7 +8,7 @@
 
 <style type="text/css">
       html, body { height: 100%; margin: 0; padding: 0; }
-      #map { height: 100%; }
+      #map { height: 90%; width: 70%; margin-left: auto; margin-right: auto;}
     </style>
 
 <!-- Latest compiled and minified CSS -->
@@ -23,42 +23,41 @@
 
 </head>
 <body>
-
+<div id="map" ></div>
+<br>
 <div>
 	<table class="table table-hover table-bordered table-striped">
 		<tr>
 			<th>Sr. No.</th>
 			<th>project config no</th>
-			<th>project city name</th>
-			<th>map latitude</th>
-			<th>map longitude</th>
+			<th>Locality</th>
 			<th>built up area</th>
-			<th>no of balconies</th>
-			<th>no of floors</th>
-			<th>no of bedroom</th>
-			<th>no of bathroom</th>
-			<th>no of units available</th>
-			<th>minimum price (in Lac)</th>
+			<th>Possession Date</th>
+			<th>no of balc.</th>
+			<th>no of floor</th>
+			<th>no of bed</th>
+			<th>no of bath</th>
+
+			<th>price (in Lac)</th>
 			<th>category</th>
-			<th>price per unit</th>
+
 			<th>amenities</th>
 		</tr>
 		
 		<tr class="success"><b>
 			<td></td>
 			<td>{{project.project_config_no}}</td>
-			<td>{{project.project_city_name}}</td>
-			<td>{{project.map_latitude}}</td>
-			<td>{{project.map_longitude}}</td>
+			<td>{{project.project_area_name}}, {{project.project_suburb_name}}</td>
 			<td>{{project.built_up_area}}</td>
+			<td>{{project.possession_text}}</td>
 			<td>{{project.no_of_balconies}}</td>
 			<td>{{project.no_of_floors}}</td>
 			<td>{{project.no_of_bedroom}}</td>
 			<td>{{project.no_of_bathroom}}</td>
-			<td>{{project.no_of_units_available}}</td>
+
 			<td>{% widthratio project.minimum_price 100000 1 %}</td>
 			<td>{{project.category}}</td>
-			<td>{{project.priceperunit}}</td>
+
 			<td>{{project.amenities}}</td>	
 		</b></tr>
 
@@ -66,18 +65,19 @@
 		<tr>
 			<td>{{forloop.counter}}</td>
 			<td>{{recoProject.project_config_no}}</td>
-			<td>{{recoProject.project_city_name}}</td>
-			<td>{{recoProject.map_latitude}}</td>
-			<td>{{recoProject.map_longitude}}</td>
+			<td>{{recoProject.project_area_name}}, {{recoProject.project_suburb_name}}</td>
+
 			<td>{{recoProject.built_up_area}}</td>
+			<td>{{recoProject.possession_text}}</td>
+			
 			<td>{{recoProject.no_of_balconies}}</td>
 			<td>{{recoProject.no_of_floors}}</td>
 			<td>{{recoProject.no_of_bedroom}}</td>
 			<td>{{recoProject.no_of_bathroom}}</td>
-			<td>{{recoProject.no_of_units_available}}</td>
+
 			<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
 			<td>{{recoProject.category}}</td>
-			<td>{{recoProject.priceperunit}}</td>
+
 			<td>{{recoProject.amenities}}</td>
 		</tr>
 		
@@ -176,7 +176,7 @@
 
 
 
-<div id="map"></div>
+
     <script type="text/javascript">
 
 
@@ -187,11 +187,32 @@ function initMap() {
 	    center: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 	  });
 
-	  var markerMain = new google.maps.Marker({
-	    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
-	    map: map,
+	  var pinIcon = new google.maps.MarkerImage(
+			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|007500",
+			    null, /* size is determined at runtime */
+			    null, /* origin is 0,0 */
+			    null, /* anchor is bottom center of the scaled image */
+			    new google.maps.Size(10, 14)
+	);
+	  
+      {% for recoProject in allProperties %}
+	  
+	  var marker{{forloop.counter}} = new google.maps.Marker({
+		    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
+		    map: map,
+		    icon: pinIcon
 	  });
 	  
+	  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
+		    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
+	
+	  });
+	  
+	  marker{{forloop.counter}}.addListener('click', function() {
+		    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+	  });
+	  
+	  {% endfor %}
 	  
 	  {% for recoProject in recoProjects %}
 	  
@@ -201,7 +222,32 @@ function initMap() {
 		    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|FF0000|000000'
 	  });
 	  
+	  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
+		    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
+	
+	  });
+	  
+	  marker{{forloop.counter}}.addListener('click', function() {
+		    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+	  });
+	  
 	  {% endfor %}
+	  
+	  var markerMain = new google.maps.Marker({
+	    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+	    map: map,
+	  });
+      
+	  var infowindow = new google.maps.InfoWindow({
+		  content: '<div>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+		  zIndex: 100,
+		  maxWidth: 100,
+	  });
+	  
+	  markerMain.addListener('click', function() {
+		    infowindow.open(map, markerMain);
+	  });
+	  
 	}
 
     </script>
