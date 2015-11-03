@@ -45,7 +45,7 @@ class DataCleaner:
         db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
         cur = db.cursor()
         #cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Config_Type, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, PricePerUnit, amenities from REDADMIN2.all_project_info")
-        cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
+        cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
         for row in cur.fetchall():
             if not data_dict.has_key(row[1]):
                 data_dict[row[1]] = {'project_id':[], 'attributes':[]}
@@ -95,7 +95,7 @@ class DataCleaner:
 
     def simple_knn_recommender(self, city):
         X = self.workable_data[city]['attributes']
-        nbrs = NearestNeighbors(n_neighbors=11, algorithm='ball_tree').fit(X)
+        nbrs = NearestNeighbors(n_neighbors=50, algorithm='ball_tree').fit(X)
         distances, indices = nbrs.kneighbors(X)
         recomendations = {}
         for row in indices:
