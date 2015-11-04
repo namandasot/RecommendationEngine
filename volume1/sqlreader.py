@@ -89,22 +89,22 @@ class DataCleaner:
         organised_data, project_city_dict = self.connect_data()
         for city in organised_data:
             x = np.array(organised_data[city]['attributes']).astype(np.float)
-            #x_normed = (x - x.min(axis=0))/(x.max(axis=0)-x.min(axis=0))
-            x_normed = x/x.max(axis=0)
+            x_normed = (x - x.min(axis=0))/(x.max(axis=0)-x.min(axis=0))
+            #x_normed = x/x.max(axis=0)
             organised_data[city]['attributes'] = x_normed
         return organised_data, project_city_dict
     
     def get_weighted_x(self, X):
-        print X.shape
+        #print X.shape
         weights = [5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         X *= weights
-        print X
+        #print X
         return X
 
     def simple_knn_recommender(self, city):
         X = self.workable_data[city]['attributes']
+        X = self.get_weighted_x(X)
         nbrs = NearestNeighbors(n_neighbors=50, algorithm='ball_tree').fit(X)
-        self.get_weighted_x(X)
         distances, indices = nbrs.kneighbors(X)
         recomendations = {}
         for row in indices:
