@@ -57,10 +57,8 @@ html, body {
 				<th>no of floor</th>
 				<th>no of bed</th>
 				<th>no of bath</th>
-
 				<th>price (in Lac)</th>
 				<th>category</th>
-
 				<th>amenities</th>
 			</tr>
 
@@ -76,10 +74,8 @@ html, body {
 				<td>{{project.no_of_floors}}</td>
 				<td>{{project.no_of_bedroom}}</td>
 				<td>{{project.no_of_bathroom}}</td>
-
 				<td>{% widthratio project.minimum_price 100000 1 %}</td>
 				<td>{{project.category}}</td>
-
 				<td>{{project.amenities}}</td>
 				</b>
 			</tr>
@@ -90,21 +86,16 @@ html, body {
 				<td>{{recoProject.project_config_no}}</td>
 				<td>{{recoProject.project_area_name}},
 					{{recoProject.project_suburb_name}}</td>
-
 				<td>{{recoProject.built_up_area}}</td>
 				<td>{{recoProject.possession_text}}</td>
-
 				<td>{{recoProject.no_of_balconies}}</td>
 				<td>{{recoProject.no_of_floors}}</td>
 				<td>{{recoProject.no_of_bedroom}}</td>
 				<td>{{recoProject.no_of_bathroom}}</td>
-
 				<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
 				<td>{{recoProject.category}}</td>
-
 				<td>{{recoProject.amenities}}</td>
 			</tr>
-
 			{% endfor %}
 		</table>
 	</div>
@@ -217,7 +208,7 @@ function initMap() {
 		  });
 	      
 		  var infowindow = new google.maps.InfoWindow({
-			  content: '<div>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
 			  zIndex: 100,
 			  maxWidth: 100,
 		  });
@@ -236,7 +227,7 @@ function initMap() {
 		  });
 		  
 		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-			    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
+			    content: '<div style="width:100px;"><h4>{{recoProject.project_config_no}}</h4>{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
 		
 		  });
 		  
@@ -256,19 +247,19 @@ function initMap() {
 	  
       {% for recoProject in allProperties %}
 	  
-	  var marker{{forloop.counter}} = new google.maps.Marker({
+	  var markerOther{{forloop.counter}} = new google.maps.Marker({
 		    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
 		    map: map,
 		    icon: pinIcon
 	  });
 	  
-	  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-		    content: '<div style="width:100px;">{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
+	  var infowindowOther{{forloop.counter}} = new google.maps.InfoWindow({
+		    content: '<div style="width:100px;"><h4>{{recoProject.project_config_no}}</h4>{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
 	
 	  });
 	  
-	  marker{{forloop.counter}}.addListener('click', function() {
-		    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+	  markerOther{{forloop.counter}}.addListener('click', function() {
+		    infowindowOther{{forloop.counter}}.open(map, markerOther{{forloop.counter}});
 	  });
 	  
 	  {% endfor %}
