@@ -1,3 +1,4 @@
+from KNN_Search import KNN_Search
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import MySQLdb
@@ -9,6 +10,7 @@ class DataCleaner:
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
         self.workable_data, self.project_city = self.get_workable_data()
+        self.KNN = KNN_Search()
 
     def aminites_class_reader(self):
         amneties_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'aminities_class.txt')
@@ -45,7 +47,7 @@ class DataCleaner:
         db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
         cur = db.cursor()
         #cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Config_Type, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, No_Of_Units_available, Minimum_Price, Category, PricePerUnit, amenities from REDADMIN2.all_project_info")
-        cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_floors, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
+        cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
         for row in cur.fetchall():
             if not data_dict.has_key(row[1]):
                 data_dict[row[1]] = {'project_id':[], 'attributes':[]}
@@ -96,33 +98,47 @@ class DataCleaner:
     
     def get_weighted_x(self, X):
         #print X.shape
-        weights = [5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        weights = [50, 50, 2, 1, 10, 1, 75, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
         X *= weights
         #print X
         return X
 
-    def simple_knn_recommender(self, city):
+    def simple_knn_recommender(self, city, project_config_No):
         X = self.workable_data[city]['attributes']
         X = self.get_weighted_x(X)
-        nbrs = NearestNeighbors(n_neighbors=50, algorithm='ball_tree').fit(X)
-        distances, indices = nbrs.kneighbors(X)
-        recomendations = {}
-        for row in indices:
-            recomendations[self.workable_data[city]['project_id'][row[0]]] = [self.workable_data[city]['project_id'][x] for x in row[1:]]
-        return recomendations
+        X_clicked = X[self.workable_data[city]['project_id'].index(project_config_No)]
+        #print '<<<<<<<<<'
+        #print X_clicked
+        results = self.KNN.get_nearest_neighbours(X, X_clicked)
+        #print list(results[:20])
+        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:100]]
+        return final_output
+
+        #for ele in results[:20]:
+        #    print self.workable_data[city]['project_id'][ele]
+        #print '>>>>>>>>>'
+        #for ele in results:
+        #    print ele
+        #nbrs = NearestNeighbors(n_neighbors=50, algorithm='ball_tree').fit(X)
+        #distances, indices = nbrs.kneighbors(X)
+        #recomendations = {}
+        #for row in indices:
+        #    recomendations[self.workable_data[city]['project_id'][row[0]]] = [self.workable_data[city]['project_id'][x] for x in row[1:]]
+        #return recomendations
 
     def get_recommendations(self, project_config_No):
         city = self.project_city.get(project_config_No)
-        Recommendation_dict = self.simple_knn_recommender(city)
-        return Recommendation_dict.get(project_config_No)
+        Recommendation_list = self.simple_knn_recommender(city, project_config_No)
+        return Recommendation_list
 
 
 if __name__ == '__main__':
     mum = []
-    a = time.time()
     DC = DataCleaner()
-    a = DC.get_recommendations(7)
-    print a
+    a = time.time()
+    b = DC.get_recommendations(7)
+    print time.time() - a
+    #print a
     #for ele in DC.workable_data:
     #    if ele == 'Mumbai':
     #        print DC.workable_data[ele]
