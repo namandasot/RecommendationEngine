@@ -71,7 +71,7 @@ class DataCleaner:
                 if val in ['', 'NONE']:
                     r.append(0.0)
                 elif val == 'AFFORDABLE':
-                    r.append(1.0)
+                     r.append(1.0)
                 elif val == 'MID_RANGE':
                     r.append(2.0)
                 elif val == 'MID_RANGE':
@@ -100,18 +100,24 @@ class DataCleaner:
     def simple_knn_recommender(self, city, project_config_No):
         X = self.workable_data[city]['attributes']
         X = self.get_weighted_x(X)
-        X_clicked = X[self.workable_data[city]['project_id'].index(project_config_No)]
-        results = self.KNN.get_nearest_neighbours(X, X_clicked)
+        
+        #X_clicked = X[self.workable_data[city]['project_id'].index(project_config_No)]
+
+        X_clicked2 = [X[self.workable_data[city]['project_id'].index(num)] for num in project_config_No]
+        results = self.KNN.get_optimum_neighbours(X, X_clicked2)
         final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:100]]
         return final_output
 
     def get_recommendations(self, project_config_No):
-        city = self.project_city.get(project_config_No)
-        Recommendation_list = self.simple_knn_recommender(city, project_config_No)
+        #city = self.project_city.get(project_config_No)
+        cities = self.project_city.get(project_config_No[0])
+        Recommendation_list = self.simple_knn_recommender(cities, project_config_No)
         return Recommendation_list
 
 
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    b = DC.get_recommendations(7)
+    lis = [37961L,7L, 19279L,24334L]
+    b = DC.get_recommendations(lis)
+    print b
