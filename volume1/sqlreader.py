@@ -118,6 +118,6 @@ class DataCleaner:
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    lis = [37961L,7L, 19279L,24334L]
+    lis = [31073L, 14045L, 31072L, 26380L, 29958L, 19508L, 43125L, 25577L, 25499L, 25500L, 29915L, 28006L, 19761L, 39029L, 25576L, 43124L, 14042L, 24348L]
     b = DC.get_recommendations(lis)
     print b

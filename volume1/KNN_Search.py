@@ -20,7 +20,8 @@ class KNN_Search:
         distance_sum = d[0]
 
         for i, vector in enumerate(d[1:]):
-        	distance_sum = distance_sum + weights[i+1] * vector
+        	if i <= 7:
+        		distance_sum = distance_sum + weights[i+1] * vector
         distance_sum_sorted_index = distance_sum.argsort()
         return distance_sum_sorted_index
         
