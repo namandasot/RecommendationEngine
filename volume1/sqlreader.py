@@ -9,7 +9,7 @@ import os
 class DataCleaner:
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
-        self.workable_data, self.project_city = self.get_workable_data()
+        self.workable_data, self.project_city, self.project_config = self.get_workable_data()
         self.KNN = KNN_Search()
 
     def aminites_class_reader(self):
@@ -42,12 +42,15 @@ class DataCleaner:
         data_dict = {}
         project_id_dict = {}
         project_city_dict = {}
+        project_config_dict = {}
         aminitie = []
         category = []
         db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
         cur = db.cursor()
-        cur.execute("select Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
-        for row in cur.fetchall():
+        cur.execute("select Project_No, Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
+        for row1 in cur.fetchall():
+            project_config_dict[row1[1]] = row1[0]
+            row = row1[1:]
             if not data_dict.has_key(row[1]):
                 data_dict[row[1]] = {'project_id':[], 'attributes':[]}
             aminities = row[-1]
@@ -82,15 +85,15 @@ class DataCleaner:
                     except:
                         r.append(0.0)
             data_dict[row[1]]['attributes'].append(r)
-        return data_dict, project_city_dict
+        return data_dict, project_city_dict, project_config_dict
 
     def get_workable_data(self):
-        organised_data, project_city_dict = self.connect_data()
+        organised_data, project_city_dict, project_config_dict = self.connect_data()
         for city in organised_data:
             x = np.array(organised_data[city]['attributes']).astype(np.float)
             x_normed = (x - x.min(axis=0))/(x.max(axis=0)-x.min(axis=0))
             organised_data[city]['attributes'] = x_normed
-        return organised_data, project_city_dict
+        return organised_data, project_city_dict, project_config_dict
     
     def get_weighted_x(self, X):
         weights = [50, 50, 2, 1, 10, 1, 75, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
@@ -112,7 +115,18 @@ class DataCleaner:
         #city = self.project_city.get(project_config_No)
         cities = self.project_city.get(project_config_No[0])
         Recommendation_list = self.simple_knn_recommender(cities, project_config_No)
-        return Recommendation_list
+        final_reults = self.reco_filter(Recommendation_list)
+        return final_reults
+    
+    def reco_filter(self, reco_list):
+        filtered_reco_list = []
+        reco_project_list = []
+        for ele in reco_list:
+            project_of_config = self.project_config.get(ele)
+            if project_of_config not in reco_project_list:
+                filtered_reco_list.append(ele)
+                reco_project_list.append(project_of_config)
+        return filtered_reco_list
 
 
 if __name__ == '__main__':
