@@ -1,3 +1,4 @@
+import copy
 from KNN_Search import KNN_Search
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
@@ -5,6 +6,7 @@ import MySQLdb
 import time
 import datetime
 import os
+import pprint
 
 class DataCleaner:
     def __init__(self):
@@ -94,20 +96,23 @@ class DataCleaner:
             x_normed = (x - x.min(axis=0))/(x.max(axis=0)-x.min(axis=0))
             organised_data[city]['attributes'] = x_normed
         return organised_data, project_city_dict, project_config_dict
-    
+
     def get_weighted_x(self, X):
         weights = [50, 50, 2, 1, 10, 1, 75, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
         X *= weights
         return X
 
     def simple_knn_recommender(self, city, project_config_No):
-        X = self.workable_data[city]['attributes']
+        X1 = self.workable_data[city]['attributes']
+        X = copy.deepcopy(X1)
         X = self.get_weighted_x(X)
-        
-        #X_clicked = X[self.workable_data[city]['project_id'].index(project_config_No)]
-
-        X_clicked2 = [X[self.workable_data[city]['project_id'].index(num)] for num in project_config_No]
+        X_clicked2 = []
+        for num in project_config_No:
+            configs_index = self.workable_data[city]['project_id'].index(num)
+            x_clic = X[configs_index]
+            X_clicked2.append(x_clic)
         results = self.KNN.get_optimum_neighbours(X, X_clicked2)
+
         final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:100]]
         return final_output
 
@@ -117,7 +122,7 @@ class DataCleaner:
         Recommendation_list = self.simple_knn_recommender(cities, project_config_No)
         final_reults = self.reco_filter(Recommendation_list)
         return final_reults
-    
+
     def reco_filter(self, reco_list):
         filtered_reco_list = []
         reco_project_list = []
@@ -132,6 +137,10 @@ class DataCleaner:
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    lis = [31073L, 14045L, 31072L, 26380L, 29958L, 19508L, 43125L, 25577L, 25499L, 25500L, 29915L, 28006L, 19761L, 39029L, 25576L, 43124L, 14042L, 24348L]
+    lis = [13, 19274L]
     b = DC.get_recommendations(lis)
+    print '>>>>>>>>>>>>>>>>>>'
+    lis = [13, 13]
+    c = DC.get_recommendations(lis)
     print b
+    print c

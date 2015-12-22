@@ -13,17 +13,14 @@ class KNN_Search:
     def get_optimum_neighbours(self, All_points, input_point):
         d = []
         for a_point in input_point:
-        	distance_list = ((All_points - a_point)**2).sum(axis=1)  # compute distances
-        	d.append(distance_list)
+            distance_list = ((All_points - a_point)**2).sum(axis=1)  # compute distances
+            d.append(distance_list)
 
         weights = [1, 0.8, 0.6, 0.5, 0.4, 0.3, 0.15, 0, 0, 0, 0]
         distance_sum = d[0]
-
         for i, vector in enumerate(d[1:]):
-        	if i <= 7:
-        		distance_sum = distance_sum + weights[i+1] * vector
+            if i <= 7:
+                distance_sum = distance_sum + weights[i+1] * vector
         distance_sum_sorted_index = distance_sum.argsort()
         return distance_sum_sorted_index
-        
-        #return ndx
 
