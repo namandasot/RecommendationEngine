@@ -21,28 +21,40 @@ class JSONResponse(HttpResponse):
 
 DC = DataCleaner()
 
-def testRecoIds(request,properties):
+def testRecoIds(request):
     
+    userId = request.GET.get('user',None)
+    print userId
+    
+    propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
+    return recoIds(request,propertyListInt)
+
+
+def getProjectIds(request, userId):
+    
+    properties=request.GET.get('properties',None)
+    print properties
     propertyListInt = []
     propertiesList = properties.split(",")
     for project in propertiesList:
         propertyListInt.append(long(project))
-    return recoIds(request,propertyListInt)
-
+    
+    return propertyListInt
+    
 def recoIds(request,properties):
     """
     List all code snippets, or create a new snippet.
     """
     if request.method == 'GET':
         
-        testVar = DC.get_recommendations(properties)
-#         print testVar
-        recommendedPropertiesAllData = AllProjectInfo.objects.filter(project_config_no__in=testVar)
+        testVar = DC.get_recommendations(properties)[:10]
+        
+        recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=testVar))
+        recommendedPropertiesAllData.sort(key=lambda t: testVar.index(t.pk))
         
         recommendedProperties = []
         for recoProperty in recommendedPropertiesAllData:
             recommendedProperties.append(AllProjectInfoSerializer(recoProperty).data)
-        print recommendedProperties
         return JSONResponse(recommendedProperties)
 
 

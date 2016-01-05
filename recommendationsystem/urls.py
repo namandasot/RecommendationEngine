@@ -8,7 +8,7 @@ from django.contrib import admin
 from views import *
 
 urlpatterns = [
-    url(r'^test/(?P<properties>\d+(,\d+)*)', 'recommendationsystem.views.testRecoIds'),
+    url(r'^$', 'recommendationsystem.views.testRecoIds'),
     #url(r'^test/(?P<property>[0-9]+)', 'recommendationsystem.views.recoIds'),
     url(r'^test/mapApi', 'recommendationsystem.views.mapApi')
 ]
