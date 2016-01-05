@@ -98,7 +98,7 @@ class DataCleaner:
         return organised_data, project_city_dict, project_config_dict
 
     def get_weighted_x(self, X):
-        weights = [50, 50, 2, 1, 10, 1, 75, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
+        weights = [300, 300, 2, 1, 10, 1, 60, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
         X *= weights
         return X
 
@@ -121,6 +121,7 @@ class DataCleaner:
         cities = self.project_city.get(project_config_No[0])
         Recommendation_list = self.simple_knn_recommender(cities, project_config_No)
         final_reults = self.reco_filter(Recommendation_list)
+        final_reults = [x for x in final_reults if x not in project_config_No]
         return final_reults
 
     def reco_filter(self, reco_list):

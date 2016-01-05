@@ -8,5 +8,5 @@ from django.contrib import admin
 from views import showRecoProjects
 
 urlpatterns = [
-    url(r'^test/(?P<project_config_id>[0-9]+)', 'testui.views.showRecoProjects')
+    url(r'^test/$', 'testui.views.showRecoProjects')
 ]

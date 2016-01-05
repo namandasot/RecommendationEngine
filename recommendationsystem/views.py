@@ -27,7 +27,8 @@ def testRecoIds(request):
     print userId
     
     propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
-    return recoIds(request,propertyListInt)
+    recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
+    return recoIds(request,recommendedProperties)
 
 
 def getProjectIds(request, userId):
@@ -45,17 +46,14 @@ def recoIds(request,properties):
     """
     List all code snippets, or create a new snippet.
     """
-    if request.method == 'GET':
-        
-        testVar = DC.get_recommendations(properties)[:10]
-        
-        recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=testVar))
-        recommendedPropertiesAllData.sort(key=lambda t: testVar.index(t.pk))
-        
-        recommendedProperties = []
-        for recoProperty in recommendedPropertiesAllData:
-            recommendedProperties.append(AllProjectInfoSerializer(recoProperty).data)
-        return JSONResponse(recommendedProperties)
+    
+    recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=properties))
+    recommendedPropertiesAllData.sort(key=lambda t: properties.index(t.pk))
+    
+    recommendedProperties = []
+    for recoProperty in recommendedPropertiesAllData:
+        recommendedProperties.append(AllProjectInfoSerializer(recoProperty).data)
+    return JSONResponse(recommendedProperties)
 
 
 

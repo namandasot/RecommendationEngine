@@ -1,12 +1,16 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Reco Test</title>
-
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<link media="all" type="text/css" rel="stylesheet" href="{% static 'css/untitled.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+	
 <style type="text/css">
 html, body {
 	height: 100%;
@@ -20,29 +24,523 @@ html, body {
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.breadcrumb h1 {
+   margin-top: initial;
+   margin-bottom: initial;
+   font-size: 13px;
+   display: inline-block;
+}
+.component ul li[data-lihref]{
+    pointer-events: all;
+}
+
+
+.bannPad .bannHover .srp-shortlist .anchor1.selected{
+	background: url(http://www.hdfcred.com/images/shortlist-active.png);
+}
+.short-list.selected{
+	/*background: url(http://www.hdfcred.com/images/shortlist-active.png);*/
+	background-image: url(../images/sprites/shortlist-active2.png) !important;
+}
+
+
+
+
+#footer{clear:both;}
+#footcontent{clear:both;width:100%;float:left;height:230px;background:#d7222b url(../images/footer2.png) no-repeat 0 30px;position: relative;margin-top:30px;}
+#footcontent:before {content: "";background-image: url(../images/footer-strip.jpg);height: 7px;width: 100%;top: -7px;position: absolute;display: block;}
+#footcontent a{color:#fff;}
+.foot-menu1{margin:36px 0 0 80px;clear:both;float:left;}
+.foot-menu1 a{padding-right:12px;margin-right:8px;background:url(../images/stick.jpg) no-repeat right 1px;}
+
+#footcontent{background:#4c4d4f;clear:both;width:100%;height:887px;float:left;}
+#footcontent h4{font-family:"open sans", Regular;font-size:18px;text-transform:uppercase;color:#b41e25;text-shadow:0px 2px 3px #e8252f;padding:0;margin:0 0 6px 4px;}
+#footcontent h4 {color: #FFF !important;text-shadow: none !important;font-weight: 500 !important;}
+.footround {background: rgba(0, 0, 0, 0.1) !important;}
+.foot-menu2 a:hover, .foot-menu3 a:hover {background: rgba(0, 0, 0, 0.1) !important;}
+.foot-half-box{width:445px;float:left;margin:0 10px 10px 0;}
+.foot-full-box{width:900px;float:left;margin:0 0 10px 0;float:left;}
+.foot-prtype-viewall{width:164px;margin-right:10px;float:left;font-weight:bold;}
+.foot-prtype-viewall a{display:block;}
+.foot-prtype{width:164px;margin-right:9px;min-height:120px;float:left;}
+.foot-prtype a{display:block;}
+ .main-footer { background: url("../images/footer-home-icon.png") no-repeat scroll 20px 40px #D7222B; color: #FFFFFF; margin: auto; width: 995px; }
+ .footround{-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;background:#cc181f;padding:6px;font-size:11px;font-weight:bold;float:left;}
+.foot-full-box .footround{width:100%;}
+#footcontent a{color:#fff;}
+div#footer {display: none;}
+.foot-menu2 .foot-big{font-size:13px;font-weight:bold;}
+.main-footer .lasta{padding-right:0;margin-right:0;background:none;}
+.foot-menu1{margin:34px 0 0 80px;width:920px;float:left;}
+.foot-menu1 a{padding-right:12px;margin-right:8px;background:url(../images/stick.jpg) no-repeat right 1px;}
+.foot-menu2 .viewall, .foot-menu3 .viewall{margin:10px 0 0 2px;font-size:13px;font-weight:bold;}
+.foot-menu2{clear:both;margin:37px 0 0 80px;}
+.foot-menu2 a,.foot-menu3 a{font-weight:normal;font-size:12px;padding:1px 0 1px 3px;}
+.foot-menu2 a:hover,.foot-menu3 a:hover{background:#ac0305 url(../images/footer-hover.jpg) no-repeat right;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;}
+.foot-menu3{clear:both;margin:33px 0 0 0px;}
+.foot-menu3 .foot-prtype{width:132px;}
+.foot-menu1 .footround, .foot-menu3 .footround{width:436px;}
+.foot-menu2 .footround{width:890px;}
+
+
+.main-footer {
+	width: 990px;
+}
+
+.foot-menu1 {
+	margin-left: 0 !important;
+}
+
+.foot-menu2 {
+	margin-left: 0 !important;
+}
+
+.foot-full-box {
+	width: 100% !important;
+}
+
+.foot-menu2 .footround {
+	width: 100% !important;
+}
+
+.foot-menu1 {
+	width: 990px;
+}
+
+.hp_footer:before {
+	content: "";
+	background-image: url(../images/footer-strip.jpg);
+	height: 7px;
+	width: 100%;
+	top: -7px;
+	position: absolute;
+	display: block;
+}
+
+.hp_footer {
+	position: relative;
+	padding-top: 6px;
+}
+
+.main-footer {
+	background: none !important;
+}
+
+
+/*New Map Css*/
+
+
+/*New Map Css*/
+
+.map-wrapper {
+	position: relative;
+	height: calc(100vh - 94px);
+}
+#map_canvas {
+	width: 100%;
+	height: 100%;
+}
+#svg_data
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	cursor:pointer;
+	display: block;
+}
+.ellipse_class { 
+	  fill: #25aae2;
+	stroke: rgba(0, 0, 0, 0);
+	border: none;
+}
+.svg_list
+{
+	margin-top:-3px;
+	margin-left:-3px;
+	display: block;
+	cursor:pointer;
+}
+.loading{
+	background-image: url('../images/map-page/Flip_Flop.gif');
+}
+.animation #room-project_details .show {
+	transform: translate3d(0px, 0px, 0px);
+}
+
+/*Info Box Css*/
+
+
+
+.infoBox1 .closeMapBtn {
+	right: 10px;
+	top: 10px;
+}
+
+/*.infoBox {
+	width: 400px !important;
+	margin: 0 auto;
+	z-index: 100;
+}*/
+
+.mini-top-info {
+	/*background-image: url('../../images/mid-top.png');
+	background-repeat: no-repeat;*/
+	background-color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	height: 15px;
+}
+
+.mini-img-info {
+	float: left;
+	width: 190px;
+	position: relative;
+}
+
+.mini-img-info img {
+	width: 100%;
+	height: auto;
+}
+
+.mini-mid-info {
+	/*background-image: url('../../images/mid-part.png');*/
+	height: 130px;
+	padding: 0 15px;
+	background-color: #fff;
+}
+
+.mini-descrip-info {
+	float: left;
+	margin-left: 0px;
+	width: 205px;
+}
+
+.mini-bot-info {
+	/*background-image: url('../../images/mid-bottom.png');
+	background-repeat: no-repeat;*/
+	height: 15px;
+	background-color: #fff;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	position: relative;
+}
+
+.mini-inner-info .down-one {
+	line-height: 15px;
+}
+
+.mini-inner-info .inner-up p {
+	padding-top: 10px;
+}
+
+.mini-bot-info:after {
+	content: "";
+	width: 18px;
+	height: 40px;
+	top: 15px;
+	position: absolute;
+	left: 50%;
+	margin-left: -9px;
+	background-image: url('../images/map-page/mid-bottom-arrow.png');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.mini-inner-info * {
+	margin: 0;
+	font-size: 12px;
+	color: #4f4f50;
+	line-height: 20px;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.mini-inner-info .inner-up {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.mini-inner-info .inner-up .up-one span {
+	margin-right: 10px;
+}
+
+.mini-inner-info .inner-down .down-one span {
+	margin-right: 10px;
+}
+
+.mini-inner-info .inner-down .down-two span {
+	margin-right: 10px;
+}
+
+.mini-inner-info.inner-up .up-two {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.mini-inner-info .inner-down {
+	font-weight: bold;
+}
+
+.mini-inner-info .inner-down span {
+	font-weight: normal;
+	color: #ababab;
+}
+
+.mini-img-info .mini-img-hover {
+	position: absolute;
+	height: 32px;
+	width: 85px;
+	left: 50%;
+	top: 50%;
+	margin-left: -42.5px;
+	margin-top: -16px;
+	opacity: 0;
+	transition: all .3s ease-In;
+	
+}
+
+.mini-img:hover .mini-img-hover {
+	opacity: 1;
+}
+
+.mini-img-hover div {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-size: contain;
+	transition: all .3s ease-In;
+}
+
+.mini-img-hover div.shortlist {
+	background-image: url('../images/shortlist-click.png');
+	margin-right: 15px;
+}
+
+.mini-img-hover div.call {
+	background-image: url('../images/call-click.png');
+}
+
+.mini-img-hover div.shortlist:hover {
+	background-image: url('../images/shortlist-active.png');
+}
+
+.mini-img-hover div.call:hover {
+	background-image: url('http://hdfcred.com/images/call-active.png');
+}
+
+.marker{
+	display: block;
+	margin-top:-44px;
+	margin-left:-22px;
+	cursor:pointer;
+	
+}
+.infoBox1{
+	width: 426px !important;
+	margin-top:-246px;margin-left:-213px;
+	cursor:pointer;
+	border-radius: 5px;
+}
+.zoom_prev{
+display:block !important;
+}
+.closeMapBtn:hover{
+	background-image: url("http://www.hdfcred.com/images/close-btn-hover.png");
+}
+.closeMapBtn{
+	background-image: url("http://www.hdfcred.com/images/close-btn.png");
+  position: absolute;
+  height: 11px;
+  width: 11px;
+  right: 16px;
+  top: 17px;
+}
+
+
+.map-wrapper {
+	position: relative;
+	height: calc(100vh - 94px);
+}
+
+/*Overview page configuration */
+.col-md-3-25 {
+	width: 25% !important;
+}
+
+[data-href]{
+	cursor: pointer;
+}
+
+
+ul.drop-list:empty {
+	height: 50px !important;
+	overflow: hidden !important;
+}
+
+[data-box="mshortlist"] ul.drop-list:empty:before {
+	content: "You haven't shortlisted any projects yet.";
+	color: black;
+	display: block;
+	text-align: center;
+}
+
+[data-box="mcontact"] ul.drop-list:empty:before {
+	content: "You haven't contacted anysellers yet.";
+	color: black;
+	display: block;
+	text-align: center;
+}
+
+[data-box="mview"] ul.drop-list:empty:before {
+	content: "You haven't viewed any projects yet.";
+	color: black;
+	display: block;
+	text-align: center;
+}
+
+/** validation **/
+.hint{
+	color:red;	
+}
+
+.contact-popup{
+	background: #FFF;
+	margin:0;
+}
+ .contact-fsec {
+background-color: rgb(255, 255, 255);
+margin: 0;
+padding: 0;
+}
+
+.contact-close{
+	font-size: 25px !important;
+    font-weight: 600 !important;
+}
+
+/*** Overview Map ***/
+.active_station{
+	color: rgb(255, 255, 255);
+	background-color: rgb(238, 237, 242);
+}
+
+.collection .btns.view-more {
+    width: 250px;
+    height: 38px;
+	display: block;
+    background-image: url('http://www.hdfcred.com/image/view-all-collections.png');
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+
+.dropzone{
+	min-height: 0;
+	padding: 0;
+	float: left;
+	border: 0;
+	background: none;
+}
+
+.dropzone .dz-preview, .dropzone-previews .dz-preview{
+	margin: 0 20px 0 0;
+	padding: 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	border: 0;
+}
+
+.dropzone a.dz-remove, .dropzone-previews a.dz-remove{
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    display: block;
+    padding: 0px 6px;
+    text-align: center;
+    color: red;
+    margin-top: 0;
+    position: absolute;
+    top: -11px;
+    right: -9px;
+    background: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+.dropzone .dz-preview .dz-details .dz-size, .dropzone-previews .dz-preview .dz-details .dz-size{
+	display: none;
+}
+.dropzone .dz-preview .dz-error-message, .dropzone-previews .dz-preview .dz-error-message {
+	z-index: 0;
+	left: 0;
+}
+
+.dropzone-add-more-wrap {
+	border: 1px solid #ddd;
+	float: right;
+}
+
+.dropzone-add-more {
+    width: 100px;
+    height: 80px;
+    float: right;
+    background: #ddd;
+    margin: 2px;
+    text-align: center;
+    padding-top: 30px;
+    color: #999;
+    font-size: 14px;
+}
+
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details{
+	height: 86px;
+	width: 106px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
+.dropzone .dz-preview .dz-details img, .dropzone-previews .dz-preview .dz-details img{
+	height: 80px;
+	margin: 2px;
+}
+
+.dropzone .dz-preview.dz-image-preview:hover .dz-details img,
+.dropzone-previews .dz-preview.dz-image-preview:hover .dz-details img {
+  display: block;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=40);
+}
+
+.srb-prop-changed{
+	border: 1px solid #ddd;
+    margin-left: 30px;
+    padding: 9px;
+    background: #eee;
+    color: #aaa;
+    margin-top: -10px;
+}
+.dropzone .dz-default.dz-message{
+	width: 530px;
+}
+.with-errors{
+color:#FF0000;
+}/*Rent Resale Css*/
+
+
 </style>
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-	integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
-	crossorigin="anonymous">
 
-<!-- Optional theme -->
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
-	integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX"
-	crossorigin="anonymous">
-
-<!-- Latest compiled and minified JavaScript -->
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
-	integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
-	crossorigin="anonymous"></script>
 
 
 </head>
 <body>
+<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_priority">Set Preferences</button> -->
+
 	<div id="map"></div>
 	<br>
 	<div>
@@ -61,7 +559,7 @@ html, body {
 				<th>category</th>
 				<th>amenities</th>
 			</tr>
-
+			{% for project in projects %}
 			<tr class="success">
 				<b>
 					<td></td>
@@ -79,7 +577,8 @@ html, body {
 				<td>{{project.amenities}}</td>
 				</b>
 			</tr>
-
+			{% endfor %}
+			
 			{% for recoProject in recoProjects %}
 			<tr>
 				<td>{{forloop.counter}}</td>
@@ -99,96 +598,6 @@ html, body {
 			{% endfor %}
 		</table>
 	</div>
-	<!-- {{project.project_config_no}}
-<br>
-
-<ul>
-{% for recoProject in recoProjects %}
-    <li>{{ recoProject.project_config_no }}</li>
-    configurations starts
-				
-	<section class="sec-configurations" id="config">
-	   <div class="container contain">
-		  <h3>Configurations</h3>
-		  <div class="config clearfix">
-			 <div class="col-md-3 config-head">PROPERTY - {{recoProject.config_type}}</div>
-			 <div class="col-md-3 config-head">BEDROOMS - {{recoProject.p_config_string}}</div>
-			 <div class="col-md-3 config-head">SIZE</div>
-			 <div class="col-md-3 config-head">AREA TYPE</div>
-			 <div class="col-md-3 config-head">PRICE <small>(INR)</small></div>
-		  </div>
-		  <div class="configs clearfix">
-		  	 			 
-			  <div class="config clearfix"> 
-			  		<div class="col-md-3">Apartment</div>
-			  		<div class="col-md-3">1 <small>BHK</small></div>
-				  	<div class="col-md-3">449 <small>sq. ft</small></div>
-			  		<div class="col-md-3">Carpet</div>
-			  		<div class="col-md-3">1.71  <small>Cr+</small></div>
-			  </div>
-
-		  	
-		  </div>
-
-	   </div>
-	</section>
-	configurations ends
-
-	amenities starts
-	<section class="sec-amenities" id="amenities">
-	   <div class="container contain">
-		  <h3>Amenities</h3>
-		  {{ recoProject.amenities}}
-		  <div class="grid-wrap">
-			<div class="grid clearfix">
-								
-				<div class="grid-item icon-lifts">
-					<span>Lifts</span>
-				</div>
-
-				
-				<div class="grid-item icon-jogging-track">
-					<span>Jogging Track</span>
-				</div>
-
-				
-				<div class="grid-item icon-garden">
-					<span>Garden</span>
-				</div>
-
-				
-				<div class="grid-item icon-club-house">
-					<span>Club house</span>
-				</div>
-
-				
-				<div class="grid-item icon-childrens-play-area">
-					<span>Children&#039;s Play Area</span>
-				</div>
-
-				
-				<div class="grid-item icon-24-hours-security">
-					<span>24 Hours Security</span>
-				</div>
-
-				
-				<div class="grid-item icon-24-hours-power-backup">
-					<span>24 Hours Power Backup</span>
-				</div>
-
-				
-			 </div>
-			 <a href="javascript:void(0);" class="more">
-				<span>More</span>
-				<i class="icon-more"></i>
-				</a>
-		  </div>
-	   </div>
-	</section>
-	amenities ends
-{% endfor %}
-</ul> -->
-
 
 
 
@@ -198,32 +607,34 @@ html, body {
 function initMap() {
 
 	  var map = new google.maps.Map(document.getElementById('map'), {
-	    zoom: 10,
-	    center: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+	    zoom: 11,
+	    center: {lat: {{projects.0.map_latitude}}, lng: {{projects.0.map_longitude}}},
 	  });
 	  
-	  var markerMain = new google.maps.Marker({
+	  {% for project in projects %}
+	  
+		  var markerMain{{forloop.counter}} = new google.maps.Marker({
 		    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 		    map: map,
 		  });
 	      
-		  var infowindow = new google.maps.InfoWindow({
+		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
 			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
 			  zIndex: 100,
 			  maxWidth: 100,
 		  });
 		  
-		  markerMain.addListener('click', function() {
-			    infowindow.open(map, markerMain);
+		  markerMain{{forloop.counter}}.addListener('click', function() {
+			    infowindow{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
 		  });
-		  
+	  {% endfor %}  
 	  
-		  {% for recoProject in recoProjects %}
-		  
+	  {% for recoProject in recoProjects %}
+	  
 		  var marker{{forloop.counter}} = new google.maps.Marker({
 			    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
 			    map: map,
-			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|FF0000|000000'
+			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|00FF00|000000'
 		  });
 		  
 		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
@@ -234,8 +645,8 @@ function initMap() {
 		  marker{{forloop.counter}}.addListener('click', function() {
 			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
 		  });
-		  
-		  {% endfor %}
+	  
+	  {% endfor %}
 
 	  var pinIcon = new google.maps.MarkerImage(
 			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|CCCCCC",
@@ -268,10 +679,879 @@ function initMap() {
 
     </script>
 	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7tofYrH2q-yLyiftwbZgOHpMzox3ynPs&callback=initMap">
+		src="https://maps.googleapis.com/maps/api/js?&callback=initMap">
+	
     </script>
 
 
+
+
+<!-- Modal Priority priority-->
+<div class="modal fade" id="myModal_priority" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+			  	<!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+			 	<h4 class="modal-title">Reorder Your Priority</h4>
+			 	<div class="mh-out">
+			 		<div class="mh-in clearfix">
+			 			<div class="mh-1 mh-tab"><span>1</span>
+							<p>Priority</p>
+			 			</div>
+			 			<div class="mh-2 mh-tab"><span>2</span>
+							<p>Preference</p>
+			 			</div>
+			 		</div>
+			 	</div>
+			</div>
+			<div class="modal-body">
+			  	<ul id="sortable">
+					<li class="ui-state-default icon icon-max-budget" id="1" data-sortOf="budget">Budget</li>
+					<li class="ui-state-default icon icon-bhk" id="2" data-sortOf="bhk">BHK/Size</li>
+					<li class="ui-state-default icon icon-possession" id="3" data-sortOf="possession">Possession</li>
+					<li class="ui-state-default icon icon-choose-location" id="4" data-sortOf="location">Location</li>
+					<li class="ui-state-default icon icon-amenities" id="5" data-sortOf="amenity_facility">Amenities &amp; Facilities</li>
+				</ul>
+			</div>
+			<div class="modal-footer">
+			  	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">SKIP</button>
+			  	<button type="button" class="btn btn-pink pull-right" data-toggle="modal" data-target="#myModal_preference" data-dismiss="modal">NEXT</button>
+			</div>
+		</div>	  
+	</div>
+</div>
+
+<!-- Modal Priority preference-->
+<div class="modal fade" id="myModal_preference" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+			  	<!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+			 	<h4 class="modal-title">Tell Us Your Preference</h4>
+			 	<div class="mh-out">
+			 		<div class="mh-in clearfix">
+			 			<div class="mh-1 mh-tab"><span>1</span>
+							<p>Priority</p>
+			 			</div>
+			 			<div class="mh-2 mh-tab"><span>2</span>
+							<p>Preference</p>
+			 			</div>
+			 		</div>
+			 	</div>
+			</div>
+			<div class="modal-body">
+			  	<ul id="sorted">
+					<li class="ui-state-default icon icon-max-budget" data-type="budget"><span class="text-mb">Budget <sup>*</sup></span>
+						<span class="budget">
+							<input type="text" name="budget" data-jid="max_budget">
+							<div class="l-c">
+								<span class="select btn" data-jclick="filter_budget" data-jvalue="Lac" data-id="clicked" data-value="maxBudgetLacFilter"><i>Lac</i></span>
+								<span class="btn" data-jclick="filter_budget" data-jvalue="Cr" data-id="clicked" data-value="maxBudgetCrFilter"><i>Cr</i></span>
+							</div>
+						</span>
+					</li>
+					<li class="ui-state-default icon icon-bhk" data-type="bhk"><span class="text-mb">BHK/Size <sup>*</sup></span>
+						<span class="bhk-list">
+							<span id="1bhkbox" class="btn select" data-jclick="filter_beds"><i>1+</i></span>
+							<span id="2bhkbox" class="btn" data-jclick="filter_beds"><i>2+</i><div class="ripple-wrapper"></div></span>
+							<span id="3bhkbox" class="btn" data-jclick="filter_beds"><i>3+</i></span>
+							<span id="4bhkbox" class="btn" data-jclick="filter_beds"><i>4+</i></span>
+						</span>
+					</li>
+					<li class="ui-state-default icon icon-possession" data-type="possession"><span class="text-mb">Possession</span>
+						<span class="possession-list">
+							<span id="1bhkbox" class="btn select" data-jclick="possession" data-possession-time="2015-11-06"><i>Ready to move</i></span>
+							<span id="2bhkbox" class="btn" data-jclick="possession" data-possession-time="2016-02-06"><i>Upto 3 months</i><div class="ripple-wrapper"></div></span>
+							<span id="3bhkbox" class="btn" data-jclick="possession" data-possession-time="2016-05-06"><i>Upto 6 months</i></span>
+							<span id="4bhkbox" class="btn" data-jclick="possession" data-possession-time="2016-11-06"><i>Upto 1 year</i></span>
+							<span id="4bhkbox" class="btn" data-jclick="possession" data-possession-time="2017-11-06"><i>Upto 2 years</i></span>
+						</span>
+					</li>
+					<li class="ui-state-default icon icon-choose-location" data-type="location"><span class="text-mb">Location <sup>*</sup></span>
+						<span class="location-list">
+							<input type="text" id="txtPlaces" data-latitude="" data-longitude="" onkeyup="initialize(this,event)" data-id="clicked" data-value="locationFilter" autocomplete="off">
+							<ul class="drop-down nearby mCustomScrollbar" style="display: block; visibility: hidden;"></ul>
+						</span>
+					</li>
+					<!-- <li class="ui-state-default icon icon-amenities"><span class="text-mb">Ameneties &amp; Facilities</span></li> -->
+				</ul>
+			</div>
+			<div class="modal-footer">
+			  	<button type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#myModal_priority"  data-dismiss="modal">BACK</button>
+			  	<button type="button" class="btn btn-pink pull-right" data-dismiss="modal" data-jclick="search_submit">SEARCH</button>
+			</div>
+		</div>	  
+	</div>
+</div>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+	<script src="https://rawgit.com/RubaXa/Sortable/master/Sortable.js"></script>
+	<!--script src="http://laravel.hdfcred.com/assets/js/custom_newsearch.js"></script-->
+<script>
+
+var scrollToElement = function(el, ms){
+    var speed = (ms) ? ms : 300;
+        $('html,body').animate({
+            scrollTop: ($(el).offset().top - 75)
+        }, speed);
+    }
+$(window).on('scroll', function(e){
+        setTimeout(function(){
+        for(var i = 0; i< sections.length; i++){
+          var top = $(sections[i]).offset().top - 95;
+          var bottom = top + $(sections[i]).outerHeight();
+          var st = $(window).scrollTop();
+          if(st > top && st < bottom){
+            var href = $(sections[i]).attr('id');
+            $('.menuli').removeClass('active');
+            $('.menuli a[href="#'+href+'"]').parent().addClass('active');
+          }
+        }}, 200)
+      }) 
+var oc = false;
+
+function show_country_dropdown(e) {
+    var formName = 'rightLoanForm';
+    if (typeof(formName) == 'undefined' || formName == '') {
+        formName = '';
+    } else {
+        formName = '#' + formName;
+    }
+    // if( jQuery('.country_dropdown').css('display') == 'none' ) {
+    if (!oc) {
+        $('.country_dropdown').slideDown(100, function() {
+            oc = true;
+        });
+        
+    } else {
+        $('.country_dropdown').slideUp(100, function() {
+            oc = false;
+            var xw = $('.country_selected_div').width();
+            console.log(xw);
+        });
+
+    }
+}
+   
+
+function LoginDiv(loginType){
+    if(loginType == 'User'){
+        document.getElementById('defaultLoginDiv').style.display = 'none';
+        document.getElementById('userLoginDiv').style.display = 'block';
+    }else if(loginType == 'Developer'){
+        document.getElementById('defaultLoginDiv').style.display = 'none';
+        document.getElementById('developerLoginDiv').style.display = 'block';
+    }else if(loginType == 'Default'){
+        document.getElementById('userLoginDiv').style.display = 'none';
+        document.getElementById('developerLoginDiv').style.display = 'none';
+        document.getElementById('defaultLoginDiv').style.display = 'block';
+    }
+}
+function goBackDiv(divName){
+    document.getElementById(divName).style.display = 'none';
+    document.getElementById('defaultLoginDiv').style.display = 'block';
+}
+function show_country_code(value, formName, country_id) {
+    if (typeof(value) == 'undefined') {
+        code = '';
+        value = '';
+    } else {
+        code = '+' + value;
+    }
+    if (typeof(value) == 'undefined' || formName == '') {
+        formName = '';
+    } else {
+        formName = '#' + formName;
+    }
+    if (typeof(country_id) == 'undefined') {
+        country_id = '';
+    }
+    if (country_id != 1) {
+        $('#cityform').hide();
+    } else {
+        $('#cityform').show();
+    }
+    jQuery('#hidden_country_id').val(country_id);
+    var className = jQuery('#country_' + value).attr('class');
+    jQuery('#selected_country').attr('class', className);
+    jQuery('#mobile_code').html(code);
+    jQuery('.country_list').removeClass('hide');
+    jQuery('#country_code_' + value).attr('class', 'country_list hide');
+    jQuery('#hidden_mobile_code').val(value);
+    jQuery('.country_dropdown').slideUp(100, function() {
+        oc = false;
+        var xw = $('.country_selected_div').width() + 15;
+        $('.mobile-col .floating-label').css("left", xw + "px");
+        $('.mobile-col input').css("padding-left", xw + "px");
+    });
+    jQuery("#selected_country").css("display", "block");
+}
+
+
+$(document).ready(function() {
+    (function($) {
+        $.fn.visible = function(partial) {
+            var $t = $(this),
+                $w = $(window),
+                viewTop = $w.scrollTop(),
+                viewBottom = viewTop + $w.height(),
+                _top = $t.offset().top,
+                _bottom = _top + $t.height(),
+                compareTop = partial === true ? _bottom : _top,
+                compareBottom = partial === true ? _top : _bottom;
+            return ((compareBottom <= viewBottom) && (compareTop >= viewTop));
+        };
+    })(jQuery);
+    var getPanelDefault = $(document).find('.panel-default').length;
+    if (getPanelDefault > 0) {
+        /*$('.panel-default').each(function(i, el){
+          $(el).css('animation-delay', '.' + (i*2) + 's');
+        });*/
+        resetanime();
+    }
+    $(".loam").on("click", ".js_amount_unit_cls", function() {
+        if ($(this).text() == 'L ') {
+            $('.js_amount_unit_cls').html('Cr <span class="unit-lc"></span>');
+            calculateByTextbox();
+        } else {
+            $('.js_amount_unit_cls').html('L <span class="unit-lc"></span>');
+            calculateByTextbox();
+        }
+    });
+    $('.enquire-now-btn a, .menuli a').click(function(e) {
+        e.preventDefault();
+        scrollToElement($(this).attr('href'), 500);
+    });
+
+    $(".foot_box").hide();
+    $(".social-foot span").click(function() {
+        $(this).toggleClass('icon-top-arrow');
+        $(this).toggleClass('icon-bottom-arrow');
+        $(".foot_box").slideToggle(600);
+        $('html, body').animate({
+            scrollTop: $(document).height()
+        }, 1200);
+    });
+    if ($.mCustomScrollbar) {
+        $(".drop-down.nearby").mCustomScrollbar({
+            scrollButtons: {
+                enable: true,
+            },
+            mouseWheel: {
+                scrollAmount: 188
+            },
+            theme: "rounded-dark",
+            autoExpandScrollbar: true,
+            autoHideScrollbar: true
+        });
+    }
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this,
+                args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+
+    var ht = 400;
+
+    $(function() {
+        if (window.innerWidth < 769) {
+            ht = window.innerHeight;
+            if (ht < 400) {
+                ht = 400;
+            }
+            $(window).on('scroll', function(e) {
+                if ($(window).scrollTop() > (window.innerHeight - 1)) {
+                    $('.ban-head-menu').addClass('bor-bot');
+                } else {
+                    $('.ban-head-menu').removeClass('bor-bot');
+                }
+            });
+        } else {
+            ht = window.innerHeight - 82;
+        }
+        // $('.contain-custom').css('min-height', ht + 'px');
+        if ($.fancybox) {
+            $(".photo").fancybox({
+                helpers: {
+                    thumbs: {
+                        width: 50,
+                        height: 50
+                    }
+                }
+            });
+            $('.text').fancybox({
+                fitToView: false,
+                width: '70%',
+                height: '70%',
+                autoSize: false,
+                closeClick: false,
+                openEffect: 'none',
+                closeEffect: 'none'
+            });
+        }
+
+        $('.photo.more').on('click', function(e) {
+            e.preventDefault();
+            $('.photo').removeClass('hidden');
+            $(this).remove();
+        });
+
+        $(document).on('click', '.ac-title', function(e) {
+            e.preventDefault();
+            $(this).parents('.accordion').siblings('.open').removeClass('open');
+            $(this).parents('.accordion').addClass('open');
+        })
+
+
+        function chageEnqType(form) {
+            $('#enquiry_type').val('SPECIAL_DEAL');
+            document.getElementById("name").focus();
+        }
+
+        function chageEnqTypeForLoan() {
+            $('#enquiry_type').val('HOME_LOAN_CONTACT');
+            document.getElementById("name").focus();
+        }
+
+
+        // $('#myScrollspy').scrollspy({target: ".myScrollspy"})
+
+        $('#myScrollspy').affix({
+            offset: {
+                top: function() {
+                    return $(window).height() - 82;
+                }
+            }
+        })
+
+        $('.enquire-now-btn').click(function(e) {
+            e.preventDefault();
+            scrollToElement($(this).attr('href'), 1000);
+        });
+
+        /*$('.zoom-ctrl a').first().on('click', function(e){
+
+            })*/
+
+        //  init();
+
+        $('.more-filt').on('click', function() {
+            $(this).toggleClass('icon-content-box-minus');
+            if ($('.more-filtone').hasClass('showy')) {
+                $('.more-filtone').removeClass('showy');
+                $('.more-filttwo').removeClass('hidey');
+                $('.more-filtone').addClass('hidey');
+                $('.more-filttwo').addClass('showy');
+            } else {
+                $('.more-filtone').removeClass('hidey');
+                $('.more-filttwo').removeClass('showy');
+                $('.more-filtone').addClass('showy');
+                $('.more-filttwo').addClass('hidey');
+            }
+        });
+
+        $('.collapse_div').on('click', function() {
+            $(this).addClass('active');
+            $('.expand_div').removeClass('active');
+            $('.panel-heading a').addClass('collapsed');
+            $('.panel-collapse.collapse').removeClass('in');
+            resetanime();
+        });
+
+        $('.expand_div').on('click', function() {
+            $(this).addClass('active');
+            $('.collapse_div').removeClass('active');
+            $('.panel-heading a').removeClass('collapsed');
+            $('.panel-collapse.collapse').addClass('in');
+            $('.panel-collapse').removeAttr('style');
+            resetanime();
+        });
+        //$('[data-toggle="tooltip"]').tooltip();
+        $('body').tooltip({
+            selector: '[data-toggle="tooltip"]'
+        });
+
+
+        // $('.panel-heading a').on('click', function () {
+        //   if ($('.panel-heading a').hasClass('collapsed')) {
+        //     $('.panel-heading a').removeClass('collapsed');
+        //     $('.panel-collapse.collapse').removeClass('in');
+        //   }
+        // });
+
+    });
+
+/*$('.slide-out-div').tabSlideOut({
+            tabHandle: '.handle',                     //class of the element that will become your tab
+            pathToTabImage: 'images/sprites/post-req.png', //path to the image for the tab //Optionally can be set using css
+            imageHeight: '192px',                     //height of tab image           //Optionally can be set using css
+            imageWidth: '45px',                       //width of tab image            //Optionally can be set using css
+            tabLocation: 'right',                      //side of screen where tab lives, top, right, bottom, or left
+            speed: 300,                               //speed of animation
+            action: 'click',                          //options: 'click' or 'hover', action to trigger animation
+            topPos: '150px',                          //position from the top/ use if tabLocation is left or right
+            leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
+            fixedPosition: false   
+                               //options: true makes it stick(fixed position) on scroll
+});*/
+
+
+if($('.slide-out-div').length > 0) {
+    $('.slide-out-div').tabSlideOut({
+        tabHandle: '.handle',                     //class of the element that will become your tab
+        pathToTabImage: 'images/sprites/post-req.png', //path to the image for the tab //Optionally can be set using css
+        imageHeight: '192px',                     //height of tab image           //Optionally can be set using css
+        imageWidth: '45px',                       //width of tab image            //Optionally can be set using css
+        tabLocation: 'right',                      //side of screen where tab lives, top, right, bottom, or left
+        speed: 300,                               //speed of animation
+        action: 'click',                          //options: 'click' or 'hover', action to trigger animation
+        topPos: '150px',                          //position from the top/ use if tabLocation is left or right
+        leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
+        fixedPosition: false                     //options: true makes it stick(fixed position) on scroll
+    });
+}
+function bhk_decrement()
+      {
+         var cur_bhk = $('.input-number').val()
+         if(cur_bhk != 1)
+         {
+            cur_bhk = parseInt(cur_bhk)  -1;
+            
+            $('.input-number').val(cur_bhk)
+            str = cur_bhk + " BHK";
+            $('.bhktextbox').html(str)
+         }
+      }
+      
+      
+      function bhk_increment()
+      {
+         var cur_bhk = $('.input-number').val()
+         if(cur_bhk != 4)
+         {
+            cur_bhk = parseInt(cur_bhk) + 1;
+            $('.input-number').val(cur_bhk)
+            
+            str = cur_bhk + " BHK";
+            $('.bhktextbox').html(str)
+         }
+}
+$('.btn-number').click(function(e){
+    e.preventDefault();
+    
+    fieldName = $(this).attr('data-field');
+    type      = $(this).attr('data-type');
+    var input = $("input[name='"+fieldName+"']");
+    var currentVal = parseInt(input.val());
+    if (!isNaN(currentVal)) {
+        if(type == 'minus') {
+            
+            if(currentVal > input.attr('min')) {
+                input.val(currentVal - 1).change();
+            } 
+            if(parseInt(input.val()) == input.attr('min')) {
+                $(this).attr('disabled', true);
+            }
+
+        } else if(type == 'plus') {
+
+            if(currentVal < input.attr('max')) {
+                input.val(currentVal + 1).change();
+            }
+            if(parseInt(input.val()) == input.attr('max')) {
+                $(this).attr('disabled', true);
+            }
+
+        }
+    } else {
+        input.val(0);
+    }
+});
+
+$('.input-number').focusin(function() {
+   $(this).data('oldValue', $(this).val());
+});
+
+$('.input-number').change(function() {
+    minValue =  parseInt($(this).attr('min'));
+    maxValue =  parseInt($(this).attr('max'));
+    valueCurrent = parseInt($(this).val());
+    
+    name = $(this).attr('name');
+    if(valueCurrent >= minValue) {
+        $(".btn-number[data-type='minus'][data-field='"+name+"']").removeAttr('disabled')
+    } else {
+        alert('Sorry, the minimum value was reached');
+        $(this).val($(this).data('oldValue'));
+    }
+    if(valueCurrent <= maxValue) {
+        $(".btn-number[data-type='plus'][data-field='"+name+"']").removeAttr('disabled')
+    } else {
+        alert('Sorry, the maximum value was reached');
+        $(this).val($(this).data('oldValue'));
+    }
+});
+
+    function resetanime() {
+        var win = $(window);
+        var allMods = $(".panel-default");
+        
+        allMods.each(function(i, el) {
+            var el = $(el);
+            //console.log('total');
+            if (el.visible(true)) {
+                el.addClass("already-visible");
+            } else {
+                
+                var docHeight = $(document).scrollTop();
+                var elemHt = $(this).offset().top;
+                if (docHeight == 0) {
+                    el.removeClass('already-visible come-in');
+                } else if (elemHt > docHeight) {
+                    el.removeClass('already-visible come-in');
+                } else {
+                    el.addClass("already-visible");
+
+                }
+            }
+        });
+        win.scroll(function(event) {
+          var idx = 0; 
+            allMods.each(function(i, el) {
+                var el = $(el);
+                if (el.visible(true)) {
+                  idx += 0.05;
+                  el.removeAttr('style');
+                  el.css('animation-duration', (idx) + 's');
+                  el.addClass("come-in");
+                }
+            });
+        });
+    }
+
+	/* Map Page Scripts Start */
+
+	/*Initializing Maps*/
+
+    if($('#map-canvas-layout').length > 0) {
+	function initialize() {
+	var mapCanvas = document.getElementById('map-canvas-layout');
+	var mapOptions = {
+	  center: new google.maps.LatLng(44.5403, -78.5463),
+	  zoom: 8,
+	  mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+	var map = new google.maps.Map(mapCanvas, mapOptions)
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+
+	/*To show hide top menu on Map page*/
+    $("header").hide();
+	$(".filter, header").hover(function() {
+		$("header").show();
+	},function(){
+		$("header").hide();
+	});
+
+	/*To animate Map Page Side Menu*/
+	var prev_click = '';
+    $(".panel-title a").click(function(e){
+
+		var id = $(this).parent().parent().attr('id');
+
+		if(prev_click == id){
+			$(".panel-group").animate({width: "200px"},100);
+			prev_click = '';
+		}
+		else{
+				$(".panel-group").animate({width: "320px"},100);
+				prev_click = id;
+			}
+	});
+
+	/*To close the Shortlisted Properties*/
+    $(".shortlist-close").click(function(){
+    	$(this).parent("li").hide();
+
+    });
+}
+
+	/* Map Page Scripts End */
+
+//<![CDATA[ 
+if ($.mCustomScrollbar) {
+    $(function(){
+         //debugger; 
+        $('#tab-content > div').hide();
+        $('#tab-content div').first().show().addClass('active');
+            $(".demo").mCustomScrollbar({
+                scrollButtons: {
+                    enable: true,
+                },
+                mouseWheel: {
+                    scrollAmount: 188
+                },
+                theme: "rounded-dark",
+                autoExpandScrollbar: true
+            });
+            
+        $('#nav li').click(function() {
+            $('#nav li a').removeClass("active");
+            $(this).find('a').addClass("active");
+            $('#tab-content > div').hide().removeClass('active');
+            var indexer = $(this).index(); //gets the current index of (this) which is #nav li
+            $('#tab-content > div').eq(indexer).addClass('active').fadeIn(); //uses whatever index the link has to open the corresponding box 
+            $(".demo").mCustomScrollbar({
+                scrollButtons: {
+                    enable: true,
+                },
+                mouseWheel: {
+                    scrollAmount: 188
+                },
+                theme: "rounded-dark",
+                autoExpandScrollbar: true
+            });
+            });
+        });//]]>
+    }
+    var field = [];
+    var ul = $("#sorted"),
+        items = $("#sorted li");
+
+    function retain_sort(field){
+        for (var i = field[field.length - 1]; i >= 0; i--) {
+            ul.prepend( items.get(field[i] - 1));
+        }
+    }
+
+    $( "#sortable" ).sortable({
+        revert: true,
+        start: function(event) {
+        },
+        stop: function(event) {
+             retain_sort(field) ;
+        },
+        update: function(event) {
+            field = $(this).sortable('toArray');
+            //console.log(field);
+        }
+    });
+    $( "#sorted", "#sorted .drop-down" ).sortable({
+        items: "li:not(.ui-state-default)"
+    });
+    $( "ul, li" ).disableSelection();
+    $('[data-target="#myModal_preference"]').click(function () {
+        setTimeout(function () {
+            $('body').addClass('modal-open');
+        }, 400);
+        // var _this = $(this);
+        // setTimeout(function () {
+        //    //_this.attr("data-dismiss", "modal");
+        // }, 100);
+    });
+    if($('#datetimepicker1').length > 0 ) {
+        $('#datetimepicker1').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        });
+    }
+});
+
+
+/** DOCUMENT READY CLOSED **/
+
+$(window).load(function(){
+    $('#myModal_priority').modal('show');
+});
+
+
+if($('select.cs-select').length > 0) {
+    SelectFx.prototype._toggleSelect = function() {
+        // remove focus class if any..
+        this._removeFocus();
+        
+        if( this._isOpen() ) {
+            if( this.current !== -1 ) {
+                // update placeholder text
+                this.selPlaceholder.textContent = this.selOpts[ this.current ].textContent;
+            }
+            document.getElementById('backdrop').style.display = 'none';
+            classie.remove( this.selEl, 'cs-active' );
+        }
+        else {
+            if( this.hasDefaultPlaceholder && this.options.stickyPlaceholder ) {
+                // everytime we open we wanna see the default placeholder text
+                this.selPlaceholder.textContent = this.selectedOpt.textContent;
+            }
+            document.getElementById('backdrop').style.display = 'block';
+            classie.add( this.selEl, 'cs-active' );
+            
+        }
+    }
+    var cityDropdown = new SelectFx(document.querySelector( 'select.cs-select' ))
+}
+
+
+    function DropDown(el) {
+                this.dd = el;
+                this.initEvents();
+            }
+            DropDown.prototype = {
+                initEvents : function() {
+                    var obj = this;
+
+                    obj.dd.on('click', function(event){
+                        $(this).toggleClass('active');
+                        event.stopPropagation();
+                    }); 
+                }
+            }
+
+            $(function() {
+
+                var dd = new DropDown( $('#topcity') );
+
+                $(document).click(function() {
+                    
+                    $('.city-dropdown').removeClass('active');
+                });
+
+            });
+/* Sortable fields */
+
+
+$(function(){
+
+
+	$('[data-jclick="filter_beds"]').bind("click",function(e){
+		e.preventDefault();
+		var selector=$(this);
+
+		$('[data-jclick="filter_beds"]').removeClass("select");
+		selector.toggleClass("select");
+	});
+
+
+
+
+
+	$('[data-jclick="filter_budget"]').bind("click",function(e){
+		e.preventDefault();
+		var selector=$(this);
+		var budget=$('[data-jid="max_budget"]').val();
+		var unit=selector.data("jvalue");
+
+		if(!parseInt(budget))
+		{
+			$('[data-jid="max_budget"]').val(null);
+		}
+		else
+		{
+			$('[data-jclick="filter_budget"]').removeClass("select");
+			selector.addClass("select");
+		}
+
+	});
+
+
+	$('[data-jclick="possession"]').bind('click', function (e) {
+		e.preventDefault();
+		var selector = $(this);
+
+		$('[data-jclick="possession"]').removeClass("select");
+		selector.toggleClass("select");
+	});
+
+
+	$('[data-jclick="search_submit"]').bind("click", function(e){
+		e.preventDefault();
+		var sorting = $( "#sortable" ).sortable("toArray");
+		var position=1;
+		for(var i in sorting)
+		{
+			$("#sortable #"+sorting[i]).data("position", position);
+			position++;
+		}
+
+		var budget = $('[data-jid="max_budget"]').val();
+		var unit=$('[data-jclick="filter_budget"].select').data("jvalue");
+		if(unit=="Lac")
+		{
+			budget*=100000
+		}
+		else
+		{
+			budget*=10000000
+		}
+
+		var data={
+			location: {
+				position: $("[data-sortof=location]").data("position"),
+				data: {
+					latitude: $("#txtPlaces").data("latitude"),
+					longitude: $("#txtPlaces").data("longitude"),
+					suggestionareaname: $("#txtPlaces").val(),
+				}
+			},
+
+			budget: {
+				position: $("[data-sortof=budget]").data("position"),
+				data: {
+					max_budget: budget
+				}
+			},
+
+			bhk: {
+				position: $("[data-sortof=bhk]").data("position"),
+				data: {
+					bhk: parseInt($('[data-jclick="filter_beds"].select').text().trim())
+				}
+			},
+			
+			possession: {
+				position: $("[data-sortof=possession]").data("position"),
+				data: {
+					date: $('[data-jclick="possession"].select').data("possessionTime")
+				}
+			},
+			
+			amenity_facility: {
+				position: $("[data-sortof=amenity_facility]").data("position")
+			},
+		};
+		
+		
+		/*
+		budget[position]:2
+		budget[data][max_budget]:8000000
+		bhk[position]:3
+		bhk[data][bhk]:2
+		possession[position]:5
+		possession[data][date]:2015-10-21
+		amenity_facility[position]:4
+		*/
+	});
+$.ajax({
+	url: "relevance_score/relevancy_score.php",
+
+});
+});
 
 </body>
 </html>
