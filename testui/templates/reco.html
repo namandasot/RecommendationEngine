@@ -618,14 +618,14 @@ function initMap() {
 		    map: map,
 		  });
 	      
-		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
+		  var infowindowMain{{forloop.counter}} = new google.maps.InfoWindow({
 			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
 			  zIndex: 100,
 			  maxWidth: 100,
 		  });
 		  
 		  markerMain{{forloop.counter}}.addListener('click', function() {
-			    infowindow{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+			    infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
 		  });
 	  {% endfor %}  
 	  

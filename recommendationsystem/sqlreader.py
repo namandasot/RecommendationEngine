@@ -98,7 +98,8 @@ class DataCleaner:
         return organised_data, project_city_dict, project_config_dict
 
     def get_weighted_x(self, X):
-        weights = [300, 300, 2, 1, 10, 1, 60, 1, 1, 1, 1, 1, 2.5, 1, 1, 2, 1, 0.7]
+        #mumbai = [300, 300, 2, 0, 10, 1, 80, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
+        weights = [300, 300, 2, 0, 10, 1, 100, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
         X *= weights
         return X
 
