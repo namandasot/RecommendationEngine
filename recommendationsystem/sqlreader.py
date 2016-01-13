@@ -120,6 +120,7 @@ class DataCleaner:
         X = copy.deepcopy(X1)
         X = self.get_weighted_x(X)
         X_clicked2 = []
+        project_config_No = [x for x in project_config_No if x in self.workable_data[city]['project_id']]
         for num in project_config_No:
             configs_index = self.workable_data[city]['project_id'].index(num)
             x_clic = X[configs_index]
@@ -141,16 +142,21 @@ class DataCleaner:
         #city = self.project_city.get(project_config_No)
         cities = self.project_city.get(project_config_No[0])
         Recommendation_list = self.simple_knn_recommender(cities, project_config_No)
-        final_reults = self.reco_filter(Recommendation_list)
+        final_reults = self.reco_filter(Recommendation_list, project_config_No)
         final_reults = [x for x in final_reults if x not in project_config_No]
         return final_reults
 
-    def reco_filter(self, reco_list):
+    def reco_filter(self, reco_list, project_config_No):
         filtered_reco_list = []
         reco_project_list = []
+        existing = []
+        for ele in project_config_No:
+            project_of_config = self.project_config.get(ele)
+            existing.append(project_of_config)
+
         for ele in reco_list:
             project_of_config = self.project_config.get(ele)
-            if project_of_config not in reco_project_list:
+            if project_of_config not in reco_project_list + existing:
                 filtered_reco_list.append(ele)
                 reco_project_list.append(project_of_config)
         return filtered_reco_list
@@ -159,7 +165,5 @@ class DataCleaner:
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    lis = [13, 19274L]
+    lis = [13, 7]
     b = DC.get_recommendations(lis)
-    lis = [13, 13]
-    c = DC.get_recommendations(lis)
