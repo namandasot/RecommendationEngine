@@ -4,15 +4,18 @@ from recommendationsystem import views
 from recommendationsystem.sqlreader import DataCleaner
 import requests
 from recommendationsystem.views import *
+from recommendationsystem.mongoConnect import *
 
+MCFW = MongoConnectionForWebsite()
 
-MCFW = MongoConnectionForWebsite() 
-
-def showRecoProjects(request):
+def showRecoProjectsUser(request):
     userId = request.GET.get('user',None)
     propertyListInt = MCFW.getFootprint(userId)
     print propertyListInt
-    #propertyListInt = getProjectIds(request, '')
+    return getRecommendation(request,propertyListInt)
+
+
+def getRecommendation(request,propertyListInt):
     recoProjectsIds = DC.get_recommendations(propertyListInt)[:10]
     
     print recoProjectsIds
@@ -29,7 +32,9 @@ def showRecoProjects(request):
     allProperties = AllProjectInfo.objects.filter(project_city_name=projects[0].project_city_name)
 
     context = {'projects' : projects, 'recoProjects' : recoProjects, 'allProperties' : allProperties}
-    return render(request, 'reco.html', context)
+    return render(request, 'reco.html', context) 
 
-
-    
+def showRecoProjects(request):
+    propertyListInt = getProjectIds(request, '')
+    print propertyListInt
+    return getRecommendation(request,propertyListInt)

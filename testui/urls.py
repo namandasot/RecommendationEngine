@@ -5,8 +5,9 @@ Created on 15-Oct-2015
 '''
 from django.conf.urls import include, url
 from django.contrib import admin
-from views import showRecoProjects
+from views import *
 
 urlpatterns = [
-    url(r'^test/$', 'testui.views.showRecoProjects')
+    url(r'^userfootprint/$', 'testui.views.showRecoProjectsUser'),
+    url(r'^project/$', 'testui.views.showRecoProjects')
 ]
