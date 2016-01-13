@@ -98,9 +98,21 @@ class DataCleaner:
         return organised_data, project_city_dict, project_config_dict
 
     def get_weighted_x(self, X):
-        #mumbai = [300, 300, 2, 0, 10, 1, 80, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
-        weights = [300, 300, 2, 0, 10, 1, 100, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
+        #mumbai = [300, 300, 2, 0, 10, 1, 100, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
+        weights = [9, 9, 2.5, 0, 1.5, 1, 8, 1.1, 0.9, 0.6, 0.6, 0.6, 1, 0.6, 0, 0.5, 0, 0.5]
+        stdev = np.ndarray.std(X, 0)
+        X /= stdev
         X *= weights
+        return X
+
+    def get_reweighted(self, X, X_clicked):
+        click_stdev = np.ndarray.std(np.array(X_clicked),0)
+        print X
+        print '<><><><>'
+        print click_stdev
+        X = X / (click_stdev+1)
+        print '<><><><>'
+        print X
         return X
 
     def simple_knn_recommender(self, city, project_config_No):
@@ -112,7 +124,15 @@ class DataCleaner:
             configs_index = self.workable_data[city]['project_id'].index(num)
             x_clic = X[configs_index]
             X_clicked2.append(x_clic)
-        results = self.KNN.get_optimum_neighbours(X, X_clicked2)
+        X = self.get_reweighted(X, X_clicked2)
+        
+        X_clicked3 = []
+        for num in project_config_No:
+            configs_index = self.workable_data[city]['project_id'].index(num)
+            x_clic = X[configs_index]
+            X_clicked3.append(x_clic)
+        
+        results = self.KNN.get_optimum_neighbours(X, X_clicked3)
 
         final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:100]]
         return final_output
@@ -141,8 +161,5 @@ if __name__ == '__main__':
     DC = DataCleaner()
     lis = [13, 19274L]
     b = DC.get_recommendations(lis)
-    print '>>>>>>>>>>>>>>>>>>'
     lis = [13, 13]
     c = DC.get_recommendations(lis)
-    print b
-    print c
