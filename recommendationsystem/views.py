@@ -9,6 +9,8 @@ from models import AllProjectInfo
 import requests
 import json
 from serializers import AllProjectInfoSerializer
+from mongoConnect import MongoConnectionForWebsite
+
 # test comment
 class JSONResponse(HttpResponse):
     """
@@ -19,14 +21,20 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-DC = DataCleaner()
+
+DC = DataCleaner()  # to be moved to class based views
+MCFW = MongoConnectionForWebsite()  # to be moved to class based views
+
 
 def testRecoIds(request):
     
     userId = request.GET.get('user',None)
     print userId
     
-    propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
+   # propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
+    propertyListInt = MCFW.getFootprint(userId)
+    print propertyListInt
+    print "printed"
     recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
     return recoIds(request,recommendedProperties)
 

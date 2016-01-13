@@ -6,9 +6,13 @@ import requests
 from recommendationsystem.views import *
 
 
-def showRecoProjects(request):
+MCFW = MongoConnectionForWebsite() 
 
-    propertyListInt = getProjectIds(request, '')
+def showRecoProjects(request):
+    userId = request.GET.get('user',None)
+    propertyListInt = MCFW.getFootprint(userId)
+    print propertyListInt
+    #propertyListInt = getProjectIds(request, '')
     recoProjectsIds = DC.get_recommendations(propertyListInt)[:10]
     
     print recoProjectsIds
