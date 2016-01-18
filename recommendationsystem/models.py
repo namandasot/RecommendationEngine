@@ -52,7 +52,7 @@ class AllProjectInfo(models.Model):
     display_instahomeloan = models.CharField(max_length=3)
     neighbour_status = models.CharField(db_column='Neighbour_Status', max_length=3)  # Field name made lowercase.
     map_longitude = models.FloatField(db_column='Map_Longitude')  # Field name made lowercase.
-    project_config_no = models.IntegerField(db_column='Project_Config_No', primary_key=True)  # Field name made lowercase.
+    project_config_no = models.IntegerField(db_column='Project_Config_No')  # Field name made lowercase.
     config_type = models.CharField(db_column='Config_Type', max_length=50)  # Field name made lowercase.
     carpet_area = models.IntegerField(db_column='Carpet_Area')  # Field name made lowercase.
     built_up_area = models.IntegerField(db_column='Built_Up_Area')  # Field name made lowercase.
@@ -107,6 +107,7 @@ class AllProjectInfo(models.Model):
     amenities = models.CharField(max_length=1000, blank=True, null=True)
     nearest_station_distance = models.IntegerField(blank=True, null=True)
     developer_overview = models.TextField(db_column='Developer_Overview', blank=True, null=True)  # Field name made lowercase.
+    ppu_metric = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
