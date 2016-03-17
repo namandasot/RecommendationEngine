@@ -10,7 +10,7 @@ import requests
 import json
 from serializers import AllProjectInfoSerializer
 from mongoConnect import MongoConnectionForWebsite
-
+import time
 # test comment
 class JSONResponse(HttpResponse):
     """
@@ -27,15 +27,18 @@ MCFW = MongoConnectionForWebsite()  # to be moved to class based views
 
 
 def testRecoIds(request):
-    
+    ia = time.time()
     userId = request.GET.get('user',None)
     print userId
     
    # propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
     propertyListInt = MCFW.getFootprint(userId)
-    print propertyListInt
-    print "printed"
+    print '///////////////////////////////'
+    print 'Mongo Loading time', time.time() - ia
+    
+    b = time.time() 
     recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
+    print 'Recommendation time', time.time() - b
     return recoIds(request,recommendedProperties)
 
 

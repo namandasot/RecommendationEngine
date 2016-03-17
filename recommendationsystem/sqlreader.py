@@ -99,7 +99,7 @@ class DataCleaner:
 
     def get_weighted_x(self, X):
         #mumbai = [300, 300, 2, 0, 10, 1, 100, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
-        weights = [9, 9, 2.5, 0, 1.5, 1, 8, 1.1, 0.9, 0.6, 0.6, 0.6, 1, 0.6, 0, 0.5, 0, 0.5]
+        weights = [9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         stdev = np.ndarray.std(X, 0)
         X /= stdev
         X *= weights
@@ -107,12 +107,7 @@ class DataCleaner:
 
     def get_reweighted(self, X, X_clicked):
         click_stdev = np.ndarray.std(np.array(X_clicked),0)
-        print X
-        print '<><><><>'
-        print click_stdev
         X = X / (click_stdev+1)
-        print '<><><><>'
-        print X
         return X
 
     def simple_knn_recommender(self, city, project_config_No):
@@ -167,3 +162,4 @@ if __name__ == '__main__':
     DC = DataCleaner()
     lis = [13, 7]
     b = DC.get_recommendations(lis)
+    print b
