@@ -8,7 +8,7 @@ from sqlreader import DataCleaner
 from models import AllProjectInfo
 import requests
 import json
-from serializers import AllProjectInfoSerializer
+from serializers import AllProjectInfoSerializer,AllProjectInfoMailerSerializer
 from mongoConnect import MongoConnectionForWebsite
 import time
 # test comment
@@ -66,8 +66,24 @@ def recoIds(request,properties):
         recommendedProperties.append(AllProjectInfoSerializer(recoProperty).data)
     return JSONResponse(recommendedProperties)
 
-
-
+def mailer(request):
+    userId = request.GET.get('user',None)
+    print userId
+    
+    propertyListInt = MCFW.getFootprint(userId)
+    recommendedProperties = DC.get_recommendations(propertyListInt)[:4]
+    return recoMailData(request,recommendedProperties)
+    
+def recoMailData(request,properties):    
+    recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=properties))
+    recommendedPropertiesAllData.sort(key=lambda t: properties.index(t.pk))
+    
+    recommendedProperties = []
+    for recoProperty in recommendedPropertiesAllData:
+        recommendedProperties.append(AllProjectInfoMailerSerializer(recoProperty).data)
+    return JSONResponse(recommendedProperties)
+    
+    
 #for getting road distance
 def mapApi(request):
 
