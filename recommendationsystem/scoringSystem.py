@@ -1,4 +1,4 @@
-## Budget Above 3cr
+## Budget Above 3cr Done
 ## Movein :  Anytime and > 3yrs
 
 import numpy as np
@@ -20,6 +20,8 @@ class scroingSystemForWebsite:
 		self.posessionDate = "posessionDate"
 		self.projectNumber = "Project_No"
 		self.projectConfigNumber = "Project_Config_No"
+		self.budgetMaxInput = "30000000"
+		self.posessionMaxInput = 365*3
 
 
 		self.fullScoreDistInKm = 5
@@ -231,6 +233,21 @@ class scroingSystemForWebsite:
 			score = 0
 			flag = 0
 
+			if(searchBudget >= self.budgetMaxInput):
+				if(budget >= searchBudget):
+					score = self.scoringMax
+					text = "Congrats, the Property meets your budget requirements"
+					flag = 1
+				else:
+				 	score = self.getLineValue((self.budgetMaxInput),(self.budgetMaxInput)*self.scoringThresholdDown,budget)
+					score = min(score,self.scoringMax)
+					text = "Property is within your budget"
+					if(score >= 80):
+						flag = 1
+						text = "Congrats, the Property meets your budget requirements"
+				continue
+
+
 			# print
 			# print "in recobudget" , budget
 			if(budget >= budgetMean):
@@ -391,6 +408,24 @@ class scroingSystemForWebsite:
 		text = ""
 		for posession,posessionDate in zip(recoPosession,recoPosessionDate):
 			flag = 0
+
+			if(searchPosession >= self.posessionMaxInput):
+				if(posession >= searchPosession ):
+					flag = 1
+					score = self.scoringMax
+					text = "This home will be yours after " + posessionDate
+
+				else:
+					score = self.getLineValue((self.posessionMaxInput),0,posession)
+					score = min(score,self.scoringMax)
+					text = "Property will be yours by "+ posessionDate
+					if(score >= 80):
+						flag = 1
+						
+
+
+				continue
+
 			if(posession <= searchPosession):
 				score = self.scoringMax
 				flag  = 1 
