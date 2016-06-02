@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
+
 class MongoConnectionForWebsite:
 
     def __init__(self, url='mongodb://MLadmin:hdfcREDML@ec2-52-35-25-23.us-west-2.compute.amazonaws.com:27017/websiteDataCapture'):

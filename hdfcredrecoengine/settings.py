@@ -15,8 +15,9 @@ import os
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
+HOSTIP = '52.35.25.23'
+HOSTUSER = 'ITadmin'
+HOSTPASWD = 'ITadmin'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -82,9 +83,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'REDADMIN2',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on
+        'USER': HOSTUSER,
+        'PASSWORD': HOSTPASWD,
+        'HOST': HOSTIP,   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }

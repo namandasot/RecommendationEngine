@@ -7,6 +7,7 @@ import time
 import datetime
 import os
 import pprint
+from hdfcredrecoengine.settings import HOSTIP, HOSTUSER, HOSTPASWD
 
 class DataCleaner:
     def __init__(self):
@@ -47,7 +48,7 @@ class DataCleaner:
         project_config_dict = {}
         aminitie = []
         category = []
-        db = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", db="REDADMIN2")
+        db = MySQLdb.connect(HOSTIP, HOSTUSER, HOSTPASWD,"REDADMIN2" )
         cur = db.cursor()
         cur.execute("select Project_No, Project_config_No, Project_City_Name, Map_Latitude, Map_Longitude, Built_Up_Area, No_Of_Balconies, No_Of_Bedroom, No_Of_Bathroom, Minimum_Price, Category, Possession, PricePerUnit, amenities from REDADMIN2.all_project_info")
         for row1 in cur.fetchall():
