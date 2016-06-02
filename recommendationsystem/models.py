@@ -112,3 +112,24 @@ class AllProjectInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'all_project_info'
+
+
+class NewSearchParams(models.Model):
+    userId = models.CharField(max_length=40, primary_key=True)
+    budget = models.IntegerField(blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
+    possession = models.IntegerField(blank=True, null=True)
+    bhk = models.IntegerField(blank=True, null=True)
+    amenities = models.CharField(max_length=200, blank=True, null=True)
+    lat_longs = models.CharField(max_length=400, blank=True, null=True)
+    preference = models.CharField(max_length=200, blank=True, null=True)
+    localities = models.CharField(max_length=200, blank=True, null=True)
+    area = models.IntegerField(blank=True, null=True)
+    modified = models.DateTimeField(auto_now=True)
+    
+    
+class Amenity(models.Model):
+    amenity_code = models.IntegerField(primary_key=True)
+    amenity_name = models.CharField(max_length=40)
+    
+    

@@ -1,37 +1,193 @@
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
-import MySQLdb
-from sklearn.neighbors import NearestNeighbors
-import numpy as np
-import os
-from sqlreader import DataCleaner
-from models import AllProjectInfo
-import requests
-import json
+from recommendationsystem.NewRecommender import DataCleaner
+from models import *
 from serializers import AllProjectInfoSerializer,AllProjectInfoMailerSerializer
 from mongoConnect import MongoConnectionForWebsite
 import time
-# test comment
+from rest_framework.views import APIView
+from rest_framework.response import Response
+import datetime
+from datetime import datetime as dtime
+from recommendationsystem.scoringSystem import scroingSystemForWebsite
+import copy
+
+Scoring = scroingSystemForWebsite()
+DC = DataCleaner()  # to be moved to class based views
+MCFW = MongoConnectionForWebsite()  # to be moved to class based views
+
+def getPossessionDays(possessionDate):
+    d1 = dtime.strptime(possessionDate, "%Y-%m-%d")
+    d2 = dtime.strptime(str(datetime.date.today()), "%Y-%m-%d")
+    return abs((d2 - d1).days)
+
+def getNewSearchResults1(request):
+    newsearch_params = NewSearchParams()
+    newsearch_params.userId = request.GET.get('user_cookie_id',None)
+    newsearch_params.budget = intC(request.GET.get('budget',None))
+    newsearch_params.city = request.GET.get('city',None)
+    newsearch_params.possession = intC(request.GET.get('possession',None))
+    newsearch_params.bhk = intC(request.GET.get('bhk',None))
+    newsearch_params.amenities = request.GET.get('amenities',None)
+    newsearch_params.lat_longs = request.GET.get('lat_longs',None)
+    newsearch_params.preference = request.GET.get('preference',None)
+    newsearch_params.localities = request.GET.get('locality',None)
+    newsearch_params.area = intC(request.GET.get('area',None))
+    newsearch_params.save()
+    return newsearch_params
+
+def getSearchParamDict(newsearch_params):
+    
+    if newsearch_params.amenities:
+        amenitiesCodes = newsearch_params.amenities.split(',')
+        amenitiesList = Amenity.objects.values_list('amenity_name', flat=True).filter(amenity_code__in=amenitiesCodes)
+    else:
+        amenitiesList=None
+    search_params = []
+    if newsearch_params.lat_longs:
+        localities_name = newsearch_params.localities.split(',')
+        lat_longs=newsearch_params.lat_longs.split(',')
+        for idx,lat_long in enumerate(lat_longs):
+            search_param = {}
+            search_param['Project_No']=None
+            search_param['Project_config_No']=None
+            search_param['Project_City_Name']=newsearch_params.city
+            search_param['Built_Up_Area'] = newsearch_params.area
+            search_param['No_Of_Balconies']=None
+            search_param['No_Of_Bedroom']=newsearch_params.bhk
+            search_param['No_Of_Bathroom']=None
+            search_param['Minimum_Price']=newsearch_params.budget
+            search_param['Category']=None
+            search_param['Possession']=newsearch_params.possession
+            search_param['PricePerUnit']=None
+            search_param['amenities']=amenitiesList
+            search_param['Map_Latitude']=lat_long.split('|')[0]
+            search_param['Map_Longitude']=lat_long.split('|')[1]
+            search_param['locality_name']=localities_name[idx]
+            search_params.append(search_param)
+    else:
+        search_param = {}
+        search_param['Project_No']=None
+        search_param['Project_config_No']=None
+        search_param['Project_City_Name']=newsearch_params.city
+        search_param['Built_Up_Area'] = newsearch_params.area
+        search_param['No_Of_Balconies']=None
+        search_param['No_Of_Bedroom']=newsearch_params.bhk
+        search_param['No_Of_Bathroom']=None
+        search_param['Minimum_Price']=newsearch_params.budget
+        search_param['Category']=None
+        search_param['Possession']=newsearch_params.possession
+        search_param['PricePerUnit']=None
+        search_param['amenities']=amenitiesList
+        search_param['Map_Latitude']=None
+        search_param['Map_Longitude']=None
+        search_params.append(search_param)
+    return search_params
+
+def getRecom(search_params,prefList):
+    search_paramsCopy = copy.deepcopy(search_params)
+    recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, [],prefList)
+    return recommendedProperties
+
+def getRel(newsearch_params,search_params,recommendedProperties):
+    searchParams = search_params
+    preferanceList = newsearch_params.preference.split(',')
+    recoPropInfoList = []
+    for recoProperties in recommendedProperties:
+        recoPropInfoList.extend(recoProperties)
+    recoPropAttrList = getProjectAttr(recoPropInfoList)
+    pastPropAttrList = []
+    relevantProperties = Scoring.getScores(searchParams,pastPropAttrList,recoPropAttrList,preferanceList)
+    # Sort the properties based on their final score and limit them as per the input 
+    return relevantProperties
+
+def getPast():
+    pass
+
+def getNewSearchResults(request):
+    limit = request.GET.get('limit',20)
+    newsearch_params = getNewSearchResults1(request)
+    search_params = getSearchParamDict(newsearch_params)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','))
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties)
+    return relevantProperties
+
+class NewSearch(APIView):
+    def get(self, request):
+        return Response(getNewSearchResults(request))
+
+
+
+
+def getProjectAttr(recoPropInfoList):
+    recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList))
+    recommendedPropertiesAllData.sort(key=lambda t: recoPropInfoList.index(t.pk))
+    
+    recommendedProperties = []
+    for recoProperty in recommendedPropertiesAllData:
+        propDict = AllProjectInfoSerializer(recoProperty).data
+        propDict['No_Of_Bedroom'] = float(str(propDict['No_Of_Bedroom']))
+#         print propDict['No_Of_Bedroom']
+        propDict['Possession'] = getPossessionDays(propDict['Possession'])
+        propDict['locality_name'] = propDict['Project_Area_Name'] +', '+ propDict['Project_Suburb_Name'] +', ' +propDict['Project_City_Name']
+        if propDict['amenities']:
+            propDict['amenities']=propDict['amenities'][1:-1].split(',')
+        else:
+            propDict['amenities']=None
+        recommendedProperties.append(propDict)
+    return recommendedProperties
+
 class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
 
-DC = DataCleaner()  # to be moved to class based views
-MCFW = MongoConnectionForWebsite()  # to be moved to class based views
 
+
+def intC(temp):
+    no = int(temp) if temp else None
+    return no
+
+
+
+    
+    
+class NewReco(APIView):
+    def get(self, request):    
+        limit = request.GET.get('limit',20)
+        userId = request.GET.get('user_cookie_id',None)
+        newsearch_params = NewSearchParams.objects.get(userId=userId)
+        print newsearch_params
+        search_params = getSearchParamDict(newsearch_params)
+        # modify footprint method
+        footprints = MCFW.getNewFootprint(userId,newsearch_params.modified)
+        recommendedProperties = DC.develop_dummy_listing(search_params, [], newsearch_params.preference.split(','))
+        print recommendedProperties
+        #scoring function
+
+        searchParams = search_params
+        preferanceList = newsearch_params.preference.split(',')
+    
+        recoPropInfoList = []
+        for recoProperties in recommendedProperties:
+            recoPropInfoList.extend(recoProperties)
+        recoPropAttrList = getProjectAttr(recoPropInfoList)
+        print recoPropAttrList
+        
+        pastPropAttrList = getProjectAttr(footprints)
+        # call scoring method
+        relevantProperties = Scoring.getScores(searchParams,pastPropAttrList,recoPropAttrList,preferanceList)
+        print relevantProperties
+        return Response(JSONResponse(relevantProperties))
 
 def testRecoIds(request):
     ia = time.time()
     userId = request.GET.get('user',None)
     print userId
     
-   # propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
+#     propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
     propertyListInt = MCFW.getFootprint(userId)
     print '///////////////////////////////'
     print 'Mongo Loading time', time.time() - ia
@@ -54,10 +210,6 @@ def getProjectIds(request, userId):
     return propertyListInt
     
 def recoIds(request,properties):
-    """
-    List all code snippets, or create a new snippet.
-    """
-    
     recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=properties))
     recommendedPropertiesAllData.sort(key=lambda t: properties.index(t.pk))
     
@@ -83,30 +235,3 @@ def recoMailData(request,properties):
         recommendedProperties.append(AllProjectInfoMailerSerializer(recoProperty).data)
     return JSONResponse(recommendedProperties)
     
-    
-#for getting road distance
-def mapApi(request):
-
-    allProperties = AllProjectInfo.objects.filter(project_city_name='Mumbai')
-    response = []
-    for orgProperty in allProperties:
-        origin = ''+str(orgProperty.map_latitude)+','+str(orgProperty.map_longitude)
-        print origin
-        
-        destination = ""
-        for i in range(3):
-            for k in range(20):
-                desPproperty = allProperties[(i+1)*k]
-                destination = destination+'|'+str(desPproperty.map_latitude)+','+str(desPproperty.map_longitude)
-            
-            print destination[1:]
-            
-            mapsApi = 'https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyBImp6Wc_X4yRW2duvUoDw2GcNZ5IkhpEk&origins='
-            mapsApi = mapsApi+origin+'&destinations='+destination[1:]
-            print mapsApi
-            resp = requests.get(mapsApi)
-            response.append(resp.text)
-            print json.loads(resp.text)
-        break
-
-    return JSONResponse(response)

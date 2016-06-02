@@ -71,13 +71,6 @@ class scroingSystemForWebsite:
 		if(searchParams[0][self.posession]):
 			posessionScore = self.getPosessionScore(searchParams,recoPropAttrList)
 
-		# print projectNo
-		# print "locationScore " ,locationScore
-		# print "amenitiesScore " , amenitiesScore
-		# print "budgetScores ",budgetScores
-		# print "bhkScore ",bhkScore
-		# print "posessionScore ",posessionScore
-
 		listFinal = []
 		for i,projectNum in enumerate(projectNo):
 			dictionary1 = {}
@@ -107,23 +100,21 @@ class scroingSystemForWebsite:
 				dictionary1["budget"]= budgetScore[i]
 				finalScore = finalScore + (5-preferanceList.index("budget"))*budgetScore[i]["score"]
 				factorDiv = factorDiv + 5 - preferanceList.index("budget")
-			
-			# print finalScore
-			# print factorDiv
+
 			score = float(finalScore)/factorDiv
-			# print score
+
 			score = min(9.8,score)
 			dictionary1[ "total_score"] = score
 
 			#dictionary1 = {"budget": budgetScores[i],"location": locationScore[i],"bhk":bhkScore[i],"possession": posessionScore[i],"amenity" : amenitiesScore[i]}
 			dictionary = {self.projectNumber : projectNum, self.projectConfigNumber : projectConfigNo[i] , "relevance_score":dictionary1}
 			listFinal.append(dictionary)
-
-
-		
-		for a in listFinal:
-			for b in a:
-				print b , a[b]
+# 
+# 
+# 		
+# 		for a in listFinal:
+# 			for b in a:
+# 				print b , a[b]
 
 		return listFinal
 
@@ -134,12 +125,10 @@ class scroingSystemForWebsite:
 		recoAmenities = map (lambda x:x[self.amenities],recoPropAttrList)
 		flag = 0
 		text = ""
-		# print searchAmenities
+
 		totalWantedAmenities = len(searchAmenities)
 		amenitiesScoreList  = []
 
-		# print recoAmenities
-		# print "a"
 		for amenity in recoAmenities:
 			numAmenities = 0
 			falseList = []
@@ -163,15 +152,11 @@ class scroingSystemForWebsite:
 
 			score = float(match)/totalWantedAmenities*self.scoringMax
 
-			# print text
-			# print 
-			# print score
-			score = score/self.scoreScaling
-			# print score
 
+			score = score/self.scoreScaling
 			dictionary = {self.textStr : text, self.scoreStr : score, self.flagStr : bool(flag)}
 			amenitiesScoreList.append(dictionary)
-		# print "done"
+
 		return amenitiesScoreList
 
 
@@ -180,8 +165,7 @@ class scroingSystemForWebsite:
 		searchBHK = searchParams[0][self.bhk]
 		pastBHK = map (lambda x:x[self.bhk],pastPropAttrList)
 		recoBHK = map (lambda x:x[self.bhk],recoPropAttrList)
-		# print "BHK"
-		# print pastBHK
+
 		score = 0
 		flag = 0
 		text = ""
@@ -201,7 +185,7 @@ class scroingSystemForWebsite:
 				else:
 					if(bhk in pastBHK) : 
 						factor = (pastBHK.index(bhk) + 1)*2
-						# print factor
+
 						score = max(self.scoringMax/factor , self.scoringMin)
 				flag = 0
 				text = "Alas! It's only a " + str(bhk) + " BHK"
@@ -219,10 +203,10 @@ class scroingSystemForWebsite:
 		recoBudget = map (lambda x:x[self.price],recoPropAttrList)
 
 		pastBudget = np.array(pastBudget)
-		print 
-		print pastBudget
+# 		print 
+# 		print pastBudget
 		budgetMeanAndStd = self.getModifiedStdDev(pastBudget,searchBudget)
-		print budgetMeanAndStd
+# 		print budgetMeanAndStd
 		budgetMean = budgetMeanAndStd[0]
 		budgetStd = budgetMeanAndStd[1]
 

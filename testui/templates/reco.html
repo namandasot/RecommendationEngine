@@ -547,51 +547,83 @@ color:#FF0000;
 		<table class="table table-hover table-bordered table-striped">
 			<tr>
 				<th>Sr. No.</th>
-				<th>project config no</th>
+				<th>config no</th>
+				<!-- <th>Rank</th> -->
+				<th>Score</th>
 				<th>Locality</th>
-				<th>built up area</th>
-				<th>Possession Date</th>
+				<!-- <th>built up area</th> -->
+				<th>Poss.</th>
 				
-				<th>no of bed</th>
-				<th>no of bath</th>
-				<th>price (in Lac)</th>
-				<th>category</th>
+				<th>bhk</th>
+				<!-- <th>no of bath</th> -->
+				<th>price (Lac)</th>
+				<!-- <th>category</th> -->
 				<th>amenities</th>
+				<th></th>
 			</tr>
-			{% for project in projects %}
-			<tr class="success">
+			
+			{% for project in search %}
+			<tr class="success" id=search{{forloop.counter}}>
 				<b>
-					<td></td>
-				<td>{{project.project_config_no}}</td>
-				<td>{{project.project_area_name}},
-					{{project.project_suburb_name}}</td>
-				<td>{{project.built_up_area}}</td>
-				<td>{{project.possession_text}}</td>
+				<td></td>
+				<!-- <td></td> -->
+				<td></td><td></td>
+				<td></td>
+				<!-- <td>{{project.built_up_area}}</td> -->
+				<td>{{project.Possession}}</td>
 
-				<td>{{project.no_of_bedroom}}</td>
-				<td>{{project.no_of_bathroom}}</td>
-				<td>{% widthratio project.minimum_price 100000 1 %}</td>
-				<td>{{project.category}}</td>
+				<td>{{project.No_Of_Bedroom}}</td>
+				<td>{% widthratio project.Minimum_Price 100000 1 %}</td>
+				<!-- <td>{{project.category}}</td> -->
 				<td>{{project.amenities}}</td>
+				<td></td>
 				</b>
 			</tr>
 			{% endfor %}
 			
-			{% for recoProject in recoProjects %}
-			<tr>
+			{% for project in past %}
+			<tr class="success" id=past{{forloop.counter}}>
+				<b>
+				<td></td>
+				<td>{{project.project_config_no}}</td>
+				<!-- <td></td> --><td></td>
+				<td>{{project.project_area_name}},
+					{{project.project_suburb_name}}</td>
+				<!-- <td>{{project.built_up_area}}</td> -->
+				<td>{{project.possession_text}}</td>
+
+				<td>{{project.no_of_bedroom}}</td>
+				<td>{% widthratio project.minimum_price 100000 1 %}</td>
+				<!-- <td>{{project.category}}</td> -->
+				<td>{{project.amenities}}</td>
+				<td></td>
+				</b>
+			</tr>
+			{% endfor %}
+			
+			
+			
+			
+			{% for recoProjectDict in recoProjects %}
+	  		{% with recoProject=recoProjectDict.project %}
+			<tr id=reco{{forloop.counter}}>
 				<td>{{forloop.counter}}</td>
 				<td>{{recoProject.project_config_no}}</td>
+				<!-- <td>{{recoProjectDict.rank}}</td> -->
+				<td>{{recoProjectDict.score}}</td>
 				<td>{{recoProject.project_area_name}},
 					{{recoProject.project_suburb_name}}</td>
-				<td>{{recoProject.built_up_area}}</td>
+				<!-- <td>{{recoProject.built_up_area}}</td> -->
 				<td>{{recoProject.possession_text}}</td>
 
 				<td>{{recoProject.no_of_bedroom}}</td>
-				<td>{{recoProject.no_of_bathroom}}</td>
+				<!-- <td>{{recoProject.no_of_bathroom}}</td> -->
 				<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
-				<td>{{recoProject.category}}</td>
+				<!-- <td>{{recoProject.category}}</td> -->
 				<td>{{recoProject.amenities}}</td>
+				<td>{{recoProjectDict.feedback}}</td>
 			</tr>
+			{% endwith %}
 			{% endfor %}
 		</table>
 	</div>
@@ -605,44 +637,55 @@ function initMap() {
 
 	  var map = new google.maps.Map(document.getElementById('map'), {
 	    zoom: 11,
-	    center: {lat: {{projects.0.map_latitude}}, lng: {{projects.0.map_longitude}}},
+	     center: {lat: {{recoProjects.0.project.map_latitude}}, lng: {{recoProjects.0.project.map_longitude}}},
 	  });
 	  
-	  {% for project in projects %}
+	   {% for project in past %}
 	  
-		  var markerMain{{forloop.counter}} = new google.maps.Marker({
+		  var markerPast{{forloop.counter}} = new google.maps.Marker({
 		    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 		    map: map,
 		  });
 	      
-		  var infowindowMain{{forloop.counter}} = new google.maps.InfoWindow({
-			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br>Area : {{project.built_up_area}}<br> Rooms : {{project.no_of_bedroom}}<br>Bathrooms : {{project.no_of_bathroom}}<br>Floors : {{project.no_of_floors}}<br>Balconies : {{project.no_of_balconies}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+		  var infowindowPast{{forloop.counter}} = new google.maps.InfoWindow({
+			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br> BHK : {{project.no_of_bedroom}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
 			  zIndex: 100,
 			  maxWidth: 100,
 		  });
 		  
-		  markerMain{{forloop.counter}}.addListener('click', function() {
-			    infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+		  markerPast{{forloop.counter}}.addListener('click', function() {
+			    infowindowPast{{forloop.counter}}.open(map, markerPast{{forloop.counter}});
 		  });
-	  {% endfor %}  
+		  
+		   document.getElementById("past{{forloop.counter}}").addEventListener('click', function() {
+			   infowindowPast{{forloop.counter}}.open(map, markerPast{{forloop.counter}});
+	  	   }); 
 	  
-	  {% for recoProject in recoProjects %}
+	  {% endfor %} 
 	  
+	  
+	  
+	  {% for recoProjectDict in recoProjects %}
+	  	{% with project=recoProjectDict.project %}
 		  var marker{{forloop.counter}} = new google.maps.Marker({
-			    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
+			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 			    map: map,
-			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|00FF00|000000'
+			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|00FF00|000000'
 		  });
 		  
 		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-			    content: '<div style="width:100px;"><h4>{{recoProject.project_config_no}}</h4>{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
-		
+			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br> BHK : {{project.no_of_bedroom}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+			  
 		  });
 		  
 		  marker{{forloop.counter}}.addListener('click', function() {
 			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
 		  });
-	  
+		  
+		  document.getElementById("reco{{forloop.counter}}").addEventListener('click', function() {
+			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+		  });
+		  {% endwith %}
 	  {% endfor %}
 
 	  var pinIcon = new google.maps.MarkerImage(
@@ -653,24 +696,49 @@ function initMap() {
 			    new google.maps.Size(10, 14)
 	);
 	  
-      {% for recoProject in allProperties %}
+      {% for project in allProperties %}
 	  
-	  var markerOther{{forloop.counter}} = new google.maps.Marker({
-		    position: {lat: {{recoProject.map_latitude}}, lng: {{recoProject.map_longitude}}},
-		    map: map,
-		    icon: pinIcon
-	  });
-	  
-	  var infowindowOther{{forloop.counter}} = new google.maps.InfoWindow({
-		    content: '<div style="width:100px;"><h4>{{recoProject.project_config_no}}</h4>{{recoProject.possession_text}}<br>Area : {{recoProject.built_up_area}}<br> Rooms : {{recoProject.no_of_bedroom}}<br>Bathrooms : {{recoProject.no_of_bathroom}}<br>Floors : {{recoProject.no_of_floors}}<br>Balconies : {{recoProject.no_of_balconies}}<br>Price : {% widthratio recoProject.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{recoProject.amenities}}</div>'
-	
-	  });
-	  
-	  markerOther{{forloop.counter}}.addListener('click', function() {
-		    infowindowOther{{forloop.counter}}.open(map, markerOther{{forloop.counter}});
-	  });
+		  var markerOther{{forloop.counter}} = new google.maps.Marker({
+			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+			    map: map,
+			    icon: pinIcon
+		  });
+		  
+		  var infowindowOther{{forloop.counter}} = new google.maps.InfoWindow({
+			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br> BHK : {{project.no_of_bedroom}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br>Amineties : {{project.amenities}}</div>',
+			  
+		  });
+		  
+		  markerOther{{forloop.counter}}.addListener('click', function() {
+			    infowindowOther{{forloop.counter}}.open(map, markerOther{{forloop.counter}});
+		  });
 	  
 	  {% endfor %}
+	  
+	  {% for project in search %}
+	  
+	  var markerMain{{forloop.counter}} = new google.maps.Marker({
+	    position: {lat: {{project.Map_Latitude}}, lng: {{project.Map_Longitude}}},
+	    map: map,
+	    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|0000FF|000000'
+			  
+	  });
+      
+	  var infowindowMain{{forloop.counter}} = new google.maps.InfoWindow({
+		  content: '<div>{{project.Possession}}<br> BHK : {{project.No_Of_Bedroom}}<br>Price : {% widthratio project.Minimum_Price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
+		  zIndex: 100,
+		  maxWidth: 100,
+	  });
+	  
+	  markerMain{{forloop.counter}}.addListener('click', function() {
+		    infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+	  });
+	  
+	  document.getElementById("search{{forloop.counter}}").addEventListener('click', function() {
+		  infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+  	   });
+	  
+  {% endfor %}
 	  
 	}
 
@@ -792,763 +860,6 @@ function initMap() {
 	<!--script src="http://laravel.hdfcred.com/assets/js/custom_newsearch.js"></script-->
 <script>
 
-var scrollToElement = function(el, ms){
-    var speed = (ms) ? ms : 300;
-        $('html,body').animate({
-            scrollTop: ($(el).offset().top - 75)
-        }, speed);
-    }
-$(window).on('scroll', function(e){
-        setTimeout(function(){
-        for(var i = 0; i< sections.length; i++){
-          var top = $(sections[i]).offset().top - 95;
-          var bottom = top + $(sections[i]).outerHeight();
-          var st = $(window).scrollTop();
-          if(st > top && st < bottom){
-            var href = $(sections[i]).attr('id');
-            $('.menuli').removeClass('active');
-            $('.menuli a[href="#'+href+'"]').parent().addClass('active');
-          }
-        }}, 200)
-      }) 
-var oc = false;
-
-function show_country_dropdown(e) {
-    var formName = 'rightLoanForm';
-    if (typeof(formName) == 'undefined' || formName == '') {
-        formName = '';
-    } else {
-        formName = '#' + formName;
-    }
-    // if( jQuery('.country_dropdown').css('display') == 'none' ) {
-    if (!oc) {
-        $('.country_dropdown').slideDown(100, function() {
-            oc = true;
-        });
-        
-    } else {
-        $('.country_dropdown').slideUp(100, function() {
-            oc = false;
-            var xw = $('.country_selected_div').width();
-            console.log(xw);
-        });
-
-    }
-}
-   
-
-function LoginDiv(loginType){
-    if(loginType == 'User'){
-        document.getElementById('defaultLoginDiv').style.display = 'none';
-        document.getElementById('userLoginDiv').style.display = 'block';
-    }else if(loginType == 'Developer'){
-        document.getElementById('defaultLoginDiv').style.display = 'none';
-        document.getElementById('developerLoginDiv').style.display = 'block';
-    }else if(loginType == 'Default'){
-        document.getElementById('userLoginDiv').style.display = 'none';
-        document.getElementById('developerLoginDiv').style.display = 'none';
-        document.getElementById('defaultLoginDiv').style.display = 'block';
-    }
-}
-function goBackDiv(divName){
-    document.getElementById(divName).style.display = 'none';
-    document.getElementById('defaultLoginDiv').style.display = 'block';
-}
-function show_country_code(value, formName, country_id) {
-    if (typeof(value) == 'undefined') {
-        code = '';
-        value = '';
-    } else {
-        code = '+' + value;
-    }
-    if (typeof(value) == 'undefined' || formName == '') {
-        formName = '';
-    } else {
-        formName = '#' + formName;
-    }
-    if (typeof(country_id) == 'undefined') {
-        country_id = '';
-    }
-    if (country_id != 1) {
-        $('#cityform').hide();
-    } else {
-        $('#cityform').show();
-    }
-    jQuery('#hidden_country_id').val(country_id);
-    var className = jQuery('#country_' + value).attr('class');
-    jQuery('#selected_country').attr('class', className);
-    jQuery('#mobile_code').html(code);
-    jQuery('.country_list').removeClass('hide');
-    jQuery('#country_code_' + value).attr('class', 'country_list hide');
-    jQuery('#hidden_mobile_code').val(value);
-    jQuery('.country_dropdown').slideUp(100, function() {
-        oc = false;
-        var xw = $('.country_selected_div').width() + 15;
-        $('.mobile-col .floating-label').css("left", xw + "px");
-        $('.mobile-col input').css("padding-left", xw + "px");
-    });
-    jQuery("#selected_country").css("display", "block");
-}
-
-
-$(document).ready(function() {
-    (function($) {
-        $.fn.visible = function(partial) {
-            var $t = $(this),
-                $w = $(window),
-                viewTop = $w.scrollTop(),
-                viewBottom = viewTop + $w.height(),
-                _top = $t.offset().top,
-                _bottom = _top + $t.height(),
-                compareTop = partial === true ? _bottom : _top,
-                compareBottom = partial === true ? _top : _bottom;
-            return ((compareBottom <= viewBottom) && (compareTop >= viewTop));
-        };
-    })(jQuery);
-    var getPanelDefault = $(document).find('.panel-default').length;
-    if (getPanelDefault > 0) {
-        /*$('.panel-default').each(function(i, el){
-          $(el).css('animation-delay', '.' + (i*2) + 's');
-        });*/
-        resetanime();
-    }
-    $(".loam").on("click", ".js_amount_unit_cls", function() {
-        if ($(this).text() == 'L ') {
-            $('.js_amount_unit_cls').html('Cr <span class="unit-lc"></span>');
-            calculateByTextbox();
-        } else {
-            $('.js_amount_unit_cls').html('L <span class="unit-lc"></span>');
-            calculateByTextbox();
-        }
-    });
-    $('.enquire-now-btn a, .menuli a').click(function(e) {
-        e.preventDefault();
-        scrollToElement($(this).attr('href'), 500);
-    });
-
-    $(".foot_box").hide();
-    $(".social-foot span").click(function() {
-        $(this).toggleClass('icon-top-arrow');
-        $(this).toggleClass('icon-bottom-arrow');
-        $(".foot_box").slideToggle(600);
-        $('html, body').animate({
-            scrollTop: $(document).height()
-        }, 1200);
-    });
-    if ($.mCustomScrollbar) {
-        $(".drop-down.nearby").mCustomScrollbar({
-            scrollButtons: {
-                enable: true,
-            },
-            mouseWheel: {
-                scrollAmount: 188
-            },
-            theme: "rounded-dark",
-            autoExpandScrollbar: true,
-            autoHideScrollbar: true
-        });
-    }
-    function debounce(func, wait, immediate) {
-        var timeout;
-        return function() {
-            var context = this,
-                args = arguments;
-            var later = function() {
-                timeout = null;
-                if (!immediate) func.apply(context, args);
-            };
-            var callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) func.apply(context, args);
-        };
-    };
-
-    var ht = 400;
-
-    $(function() {
-        if (window.innerWidth < 769) {
-            ht = window.innerHeight;
-            if (ht < 400) {
-                ht = 400;
-            }
-            $(window).on('scroll', function(e) {
-                if ($(window).scrollTop() > (window.innerHeight - 1)) {
-                    $('.ban-head-menu').addClass('bor-bot');
-                } else {
-                    $('.ban-head-menu').removeClass('bor-bot');
-                }
-            });
-        } else {
-            ht = window.innerHeight - 82;
-        }
-        // $('.contain-custom').css('min-height', ht + 'px');
-        if ($.fancybox) {
-            $(".photo").fancybox({
-                helpers: {
-                    thumbs: {
-                        width: 50,
-                        height: 50
-                    }
-                }
-            });
-            $('.text').fancybox({
-                fitToView: false,
-                width: '70%',
-                height: '70%',
-                autoSize: false,
-                closeClick: false,
-                openEffect: 'none',
-                closeEffect: 'none'
-            });
-        }
-
-        $('.photo.more').on('click', function(e) {
-            e.preventDefault();
-            $('.photo').removeClass('hidden');
-            $(this).remove();
-        });
-
-        $(document).on('click', '.ac-title', function(e) {
-            e.preventDefault();
-            $(this).parents('.accordion').siblings('.open').removeClass('open');
-            $(this).parents('.accordion').addClass('open');
-        })
-
-
-        function chageEnqType(form) {
-            $('#enquiry_type').val('SPECIAL_DEAL');
-            document.getElementById("name").focus();
-        }
-
-        function chageEnqTypeForLoan() {
-            $('#enquiry_type').val('HOME_LOAN_CONTACT');
-            document.getElementById("name").focus();
-        }
-
-
-        // $('#myScrollspy').scrollspy({target: ".myScrollspy"})
-
-        $('#myScrollspy').affix({
-            offset: {
-                top: function() {
-                    return $(window).height() - 82;
-                }
-            }
-        })
-
-        $('.enquire-now-btn').click(function(e) {
-            e.preventDefault();
-            scrollToElement($(this).attr('href'), 1000);
-        });
-
-        /*$('.zoom-ctrl a').first().on('click', function(e){
-
-            })*/
-
-        //  init();
-
-        $('.more-filt').on('click', function() {
-            $(this).toggleClass('icon-content-box-minus');
-            if ($('.more-filtone').hasClass('showy')) {
-                $('.more-filtone').removeClass('showy');
-                $('.more-filttwo').removeClass('hidey');
-                $('.more-filtone').addClass('hidey');
-                $('.more-filttwo').addClass('showy');
-            } else {
-                $('.more-filtone').removeClass('hidey');
-                $('.more-filttwo').removeClass('showy');
-                $('.more-filtone').addClass('showy');
-                $('.more-filttwo').addClass('hidey');
-            }
-        });
-
-        $('.collapse_div').on('click', function() {
-            $(this).addClass('active');
-            $('.expand_div').removeClass('active');
-            $('.panel-heading a').addClass('collapsed');
-            $('.panel-collapse.collapse').removeClass('in');
-            resetanime();
-        });
-
-        $('.expand_div').on('click', function() {
-            $(this).addClass('active');
-            $('.collapse_div').removeClass('active');
-            $('.panel-heading a').removeClass('collapsed');
-            $('.panel-collapse.collapse').addClass('in');
-            $('.panel-collapse').removeAttr('style');
-            resetanime();
-        });
-        //$('[data-toggle="tooltip"]').tooltip();
-        $('body').tooltip({
-            selector: '[data-toggle="tooltip"]'
-        });
-
-
-        // $('.panel-heading a').on('click', function () {
-        //   if ($('.panel-heading a').hasClass('collapsed')) {
-        //     $('.panel-heading a').removeClass('collapsed');
-        //     $('.panel-collapse.collapse').removeClass('in');
-        //   }
-        // });
-
-    });
-
-/*$('.slide-out-div').tabSlideOut({
-            tabHandle: '.handle',                     //class of the element that will become your tab
-            pathToTabImage: 'images/sprites/post-req.png', //path to the image for the tab //Optionally can be set using css
-            imageHeight: '192px',                     //height of tab image           //Optionally can be set using css
-            imageWidth: '45px',                       //width of tab image            //Optionally can be set using css
-            tabLocation: 'right',                      //side of screen where tab lives, top, right, bottom, or left
-            speed: 300,                               //speed of animation
-            action: 'click',                          //options: 'click' or 'hover', action to trigger animation
-            topPos: '150px',                          //position from the top/ use if tabLocation is left or right
-            leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
-            fixedPosition: false   
-                               //options: true makes it stick(fixed position) on scroll
-});*/
-
-
-if($('.slide-out-div').length > 0) {
-    $('.slide-out-div').tabSlideOut({
-        tabHandle: '.handle',                     //class of the element that will become your tab
-        pathToTabImage: 'images/sprites/post-req.png', //path to the image for the tab //Optionally can be set using css
-        imageHeight: '192px',                     //height of tab image           //Optionally can be set using css
-        imageWidth: '45px',                       //width of tab image            //Optionally can be set using css
-        tabLocation: 'right',                      //side of screen where tab lives, top, right, bottom, or left
-        speed: 300,                               //speed of animation
-        action: 'click',                          //options: 'click' or 'hover', action to trigger animation
-        topPos: '150px',                          //position from the top/ use if tabLocation is left or right
-        leftPos: '20px',                          //position from left/ use if tabLocation is bottom or top
-        fixedPosition: false                     //options: true makes it stick(fixed position) on scroll
-    });
-}
-function bhk_decrement()
-      {
-         var cur_bhk = $('.input-number').val()
-         if(cur_bhk != 1)
-         {
-            cur_bhk = parseInt(cur_bhk)  -1;
-            
-            $('.input-number').val(cur_bhk)
-            str = cur_bhk + " BHK";
-            $('.bhktextbox').html(str)
-         }
-      }
-      
-      
-      function bhk_increment()
-      {
-         var cur_bhk = $('.input-number').val()
-         if(cur_bhk != 4)
-         {
-            cur_bhk = parseInt(cur_bhk) + 1;
-            $('.input-number').val(cur_bhk)
-            
-            str = cur_bhk + " BHK";
-            $('.bhktextbox').html(str)
-         }
-}
-$('.btn-number').click(function(e){
-    e.preventDefault();
-    
-    fieldName = $(this).attr('data-field');
-    type      = $(this).attr('data-type');
-    var input = $("input[name='"+fieldName+"']");
-    var currentVal = parseInt(input.val());
-    if (!isNaN(currentVal)) {
-        if(type == 'minus') {
-            
-            if(currentVal > input.attr('min')) {
-                input.val(currentVal - 1).change();
-            } 
-            if(parseInt(input.val()) == input.attr('min')) {
-                $(this).attr('disabled', true);
-            }
-
-        } else if(type == 'plus') {
-
-            if(currentVal < input.attr('max')) {
-                input.val(currentVal + 1).change();
-            }
-            if(parseInt(input.val()) == input.attr('max')) {
-                $(this).attr('disabled', true);
-            }
-
-        }
-    } else {
-        input.val(0);
-    }
-});
-
-$('.input-number').focusin(function() {
-   $(this).data('oldValue', $(this).val());
-});
-
-$('.input-number').change(function() {
-    minValue =  parseInt($(this).attr('min'));
-    maxValue =  parseInt($(this).attr('max'));
-    valueCurrent = parseInt($(this).val());
-    
-    name = $(this).attr('name');
-    if(valueCurrent >= minValue) {
-        $(".btn-number[data-type='minus'][data-field='"+name+"']").removeAttr('disabled')
-    } else {
-        alert('Sorry, the minimum value was reached');
-        $(this).val($(this).data('oldValue'));
-    }
-    if(valueCurrent <= maxValue) {
-        $(".btn-number[data-type='plus'][data-field='"+name+"']").removeAttr('disabled')
-    } else {
-        alert('Sorry, the maximum value was reached');
-        $(this).val($(this).data('oldValue'));
-    }
-});
-
-    function resetanime() {
-        var win = $(window);
-        var allMods = $(".panel-default");
-        
-        allMods.each(function(i, el) {
-            var el = $(el);
-            //console.log('total');
-            if (el.visible(true)) {
-                el.addClass("already-visible");
-            } else {
-                
-                var docHeight = $(document).scrollTop();
-                var elemHt = $(this).offset().top;
-                if (docHeight == 0) {
-                    el.removeClass('already-visible come-in');
-                } else if (elemHt > docHeight) {
-                    el.removeClass('already-visible come-in');
-                } else {
-                    el.addClass("already-visible");
-
-                }
-            }
-        });
-        win.scroll(function(event) {
-          var idx = 0; 
-            allMods.each(function(i, el) {
-                var el = $(el);
-                if (el.visible(true)) {
-                  idx += 0.05;
-                  el.removeAttr('style');
-                  el.css('animation-duration', (idx) + 's');
-                  el.addClass("come-in");
-                }
-            });
-        });
-    }
-
-	/* Map Page Scripts Start */
-
-	/*Initializing Maps*/
-
-    if($('#map-canvas-layout').length > 0) {
-	function initialize() {
-	var mapCanvas = document.getElementById('map-canvas-layout');
-	var mapOptions = {
-	  center: new google.maps.LatLng(44.5403, -78.5463),
-	  zoom: 8,
-	  mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	var map = new google.maps.Map(mapCanvas, mapOptions)
-	}
-	google.maps.event.addDomListener(window, 'load', initialize);
-
-	/*To show hide top menu on Map page*/
-    $("header").hide();
-	$(".filter, header").hover(function() {
-		$("header").show();
-	},function(){
-		$("header").hide();
-	});
-
-	/*To animate Map Page Side Menu*/
-	var prev_click = '';
-    $(".panel-title a").click(function(e){
-
-		var id = $(this).parent().parent().attr('id');
-
-		if(prev_click == id){
-			$(".panel-group").animate({width: "200px"},100);
-			prev_click = '';
-		}
-		else{
-				$(".panel-group").animate({width: "320px"},100);
-				prev_click = id;
-			}
-	});
-
-	/*To close the Shortlisted Properties*/
-    $(".shortlist-close").click(function(){
-    	$(this).parent("li").hide();
-
-    });
-}
-
-	/* Map Page Scripts End */
-
-//<![CDATA[ 
-if ($.mCustomScrollbar) {
-    $(function(){
-         //debugger; 
-        $('#tab-content > div').hide();
-        $('#tab-content div').first().show().addClass('active');
-            $(".demo").mCustomScrollbar({
-                scrollButtons: {
-                    enable: true,
-                },
-                mouseWheel: {
-                    scrollAmount: 188
-                },
-                theme: "rounded-dark",
-                autoExpandScrollbar: true
-            });
-            
-        $('#nav li').click(function() {
-            $('#nav li a').removeClass("active");
-            $(this).find('a').addClass("active");
-            $('#tab-content > div').hide().removeClass('active');
-            var indexer = $(this).index(); //gets the current index of (this) which is #nav li
-            $('#tab-content > div').eq(indexer).addClass('active').fadeIn(); //uses whatever index the link has to open the corresponding box 
-            $(".demo").mCustomScrollbar({
-                scrollButtons: {
-                    enable: true,
-                },
-                mouseWheel: {
-                    scrollAmount: 188
-                },
-                theme: "rounded-dark",
-                autoExpandScrollbar: true
-            });
-            });
-        });//]]>
-    }
-    var field = [];
-    var ul = $("#sorted"),
-        items = $("#sorted li");
-
-    function retain_sort(field){
-        for (var i = field[field.length - 1]; i >= 0; i--) {
-            ul.prepend( items.get(field[i] - 1));
-        }
-    }
-
-    $( "#sortable" ).sortable({
-        revert: true,
-        start: function(event) {
-        },
-        stop: function(event) {
-             retain_sort(field) ;
-        },
-        update: function(event) {
-            field = $(this).sortable('toArray');
-            //console.log(field);
-        }
-    });
-    $( "#sorted", "#sorted .drop-down" ).sortable({
-        items: "li:not(.ui-state-default)"
-    });
-    $( "ul, li" ).disableSelection();
-    $('[data-target="#myModal_preference"]').click(function () {
-        setTimeout(function () {
-            $('body').addClass('modal-open');
-        }, 400);
-        // var _this = $(this);
-        // setTimeout(function () {
-        //    //_this.attr("data-dismiss", "modal");
-        // }, 100);
-    });
-    if($('#datetimepicker1').length > 0 ) {
-        $('#datetimepicker1').datepicker({
-            autoclose: true,
-            todayHighlight: true
-        });
-    }
-});
-
-
-/** DOCUMENT READY CLOSED **/
-
-$(window).load(function(){
-    $('#myModal_priority').modal('show');
-});
-
-
-if($('select.cs-select').length > 0) {
-    SelectFx.prototype._toggleSelect = function() {
-        // remove focus class if any..
-        this._removeFocus();
-        
-        if( this._isOpen() ) {
-            if( this.current !== -1 ) {
-                // update placeholder text
-                this.selPlaceholder.textContent = this.selOpts[ this.current ].textContent;
-            }
-            document.getElementById('backdrop').style.display = 'none';
-            classie.remove( this.selEl, 'cs-active' );
-        }
-        else {
-            if( this.hasDefaultPlaceholder && this.options.stickyPlaceholder ) {
-                // everytime we open we wanna see the default placeholder text
-                this.selPlaceholder.textContent = this.selectedOpt.textContent;
-            }
-            document.getElementById('backdrop').style.display = 'block';
-            classie.add( this.selEl, 'cs-active' );
-            
-        }
-    }
-    var cityDropdown = new SelectFx(document.querySelector( 'select.cs-select' ))
-}
-
-
-    function DropDown(el) {
-                this.dd = el;
-                this.initEvents();
-            }
-            DropDown.prototype = {
-                initEvents : function() {
-                    var obj = this;
-
-                    obj.dd.on('click', function(event){
-                        $(this).toggleClass('active');
-                        event.stopPropagation();
-                    }); 
-                }
-            }
-
-            $(function() {
-
-                var dd = new DropDown( $('#topcity') );
-
-                $(document).click(function() {
-                    
-                    $('.city-dropdown').removeClass('active');
-                });
-
-            });
-/* Sortable fields */
-
-
-$(function(){
-
-
-	$('[data-jclick="filter_beds"]').bind("click",function(e){
-		e.preventDefault();
-		var selector=$(this);
-
-		$('[data-jclick="filter_beds"]').removeClass("select");
-		selector.toggleClass("select");
-	});
-
-
-
-
-
-	$('[data-jclick="filter_budget"]').bind("click",function(e){
-		e.preventDefault();
-		var selector=$(this);
-		var budget=$('[data-jid="max_budget"]').val();
-		var unit=selector.data("jvalue");
-
-		if(!parseInt(budget))
-		{
-			$('[data-jid="max_budget"]').val(null);
-		}
-		else
-		{
-			$('[data-jclick="filter_budget"]').removeClass("select");
-			selector.addClass("select");
-		}
-
-	});
-
-
-	$('[data-jclick="possession"]').bind('click', function (e) {
-		e.preventDefault();
-		var selector = $(this);
-
-		$('[data-jclick="possession"]').removeClass("select");
-		selector.toggleClass("select");
-	});
-
-
-	$('[data-jclick="search_submit"]').bind("click", function(e){
-		e.preventDefault();
-		var sorting = $( "#sortable" ).sortable("toArray");
-		var position=1;
-		for(var i in sorting)
-		{
-			$("#sortable #"+sorting[i]).data("position", position);
-			position++;
-		}
-
-		var budget = $('[data-jid="max_budget"]').val();
-		var unit=$('[data-jclick="filter_budget"].select').data("jvalue");
-		if(unit=="Lac")
-		{
-			budget*=100000
-		}
-		else
-		{
-			budget*=10000000
-		}
-
-		var data={
-			location: {
-				position: $("[data-sortof=location]").data("position"),
-				data: {
-					latitude: $("#txtPlaces").data("latitude"),
-					longitude: $("#txtPlaces").data("longitude"),
-					suggestionareaname: $("#txtPlaces").val(),
-				}
-			},
-
-			budget: {
-				position: $("[data-sortof=budget]").data("position"),
-				data: {
-					max_budget: budget
-				}
-			},
-
-			bhk: {
-				position: $("[data-sortof=bhk]").data("position"),
-				data: {
-					bhk: parseInt($('[data-jclick="filter_beds"].select').text().trim())
-				}
-			},
-			
-			possession: {
-				position: $("[data-sortof=possession]").data("position"),
-				data: {
-					date: $('[data-jclick="possession"].select').data("possessionTime")
-				}
-			},
-			
-			amenity_facility: {
-				position: $("[data-sortof=amenity_facility]").data("position")
-			},
-		};
-		
-		
-		/*
-		budget[position]:2
-		budget[data][max_budget]:8000000
-		bhk[position]:3
-		bhk[data][bhk]:2
-		possession[position]:5
-		possession[data][date]:2015-10-21
-		amenity_facility[position]:4
-		*/
-	});
-$.ajax({
-	url: "relevance_score/relevancy_score.php",
-
-});
-});
 
 </body>
 </html>

@@ -9,5 +9,6 @@ from views import *
 
 urlpatterns = [
     url(r'^userfootprint/$', 'testui.views.showRecoProjectsUser'),
-    url(r'^project/$', 'testui.views.showRecoProjects')
+    url(r'^project/$', 'testui.views.showRecoProjects'),
+    url(r'^newsearch/$', 'testui.views.showRecoProjectsNewSearch')
 ]
