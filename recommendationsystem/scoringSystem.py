@@ -317,15 +317,15 @@ class scroingSystemForWebsite:
 	def getLineValue(self,p1x,p2x,query):
 		p1y = self.scoringMax
 		p2y = self.scoringMin
-		slope = (p1y - p2y)/(p1x - p2x)
-		constant = ((p2y*p1x) - (p1y*p2x)) / (p1x - p2x)
+		slope = float((p1y - p2y))/(p1x - p2x)
+		constant = float(((p2y*p1x) - (p1y*p2x))) / (p1x - p2x)
 		return ((slope * query) + constant)
 
 	def getLineValueAll(self,p1x,p1y,p2x,p2y,query):
 		# p1y = self.scoringMax
 		# p2y = self.scoringMin
-		slope = (p1y - p2y)/(p1x - p2x)
-		constant = ((p2y*p1x) - (p1y*p2x)) / (p1x - p2x)
+		slope = float((p1y - p2y))/(p1x - p2x)
+		constant = float(((p2y*p1x) - (p1y*p2x))) / (p1x - p2x)
 		return ((slope * query) + constant)
 
 
@@ -415,7 +415,6 @@ class scroingSystemForWebsite:
 		text = ""
 		for posession,posessionDate in zip(recoPosession,recoPosessionDate):
 			flag = 0
-
 			if(searchPosession >= self.posessionMaxInput):
 				if(posession >= searchPosession ):
 					flag = 1
@@ -439,7 +438,6 @@ class scroingSystemForWebsite:
 				text = "This home can be yours after " + posessionDate
 			else:
 				diff = posession- searchPosession
-
 				if(diff < self.oneYear):
 					score = self.getLineValueAll(0,100,self.oneYear,50,diff)
 					score = min(score,self.scoringMax)
@@ -471,7 +469,6 @@ class scroingSystemForWebsite:
 			score = score/self.scoreScaling
 			dictionary = {self.textStr : text, self.scoreStr : score, self.flagStr : bool(flag)}
 			posessionScoreList.append(dictionary)
-		#print "poseesion" ,posessionScoreList
 		return posessionScoreList
 
 
