@@ -17,9 +17,17 @@ DC = DataCleaner()  # to be moved to class based views
 MCFW = MongoConnectionForWebsite()  # to be moved to class based views
 
 def getPossessionDays(possessionDate):
-    d1 = dtime.strptime(possessionDate, "%Y-%m-%d")
+    try:
+        d1 = dtime.strptime(possessionDate, "%Y-%m-%d")
+    except:
+        return 0
     d2 = dtime.strptime(str(datetime.date.today()), "%Y-%m-%d")
-    return abs((d2 - d1).days)
+    days = (d2 - d1).days
+    if days<0:
+        return 0
+    else:
+        return days
+
 
 def getNewSearchResults1(request):
     newsearch_params = NewSearchParams()

@@ -47,7 +47,7 @@ def showMap(request,search,past,recoList,relevantList):
 #         pastPrj = list(AllProjectInfo.objects.filter(project_config_no__in=past))
 #         pastPrj.sort(key=lambda t: past.index(t.pk))
     finalResultNew = sorted(finalResult, key=lambda k: k['score'],reverse=True) 
-    allProperties = AllProjectInfo.objects.filter(project_city_name='Mumbai')
+    allProperties = AllProjectInfo.objects.filter(project_city_name=search[0]['Project_City_Name'])
     context = {'recoProjects' : finalResultNew, 'allProperties' : allProperties, 'search':search, 'past':None}
     return render(request, 'reco.html', context) 
     
