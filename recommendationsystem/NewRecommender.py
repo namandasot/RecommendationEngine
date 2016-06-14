@@ -7,7 +7,11 @@ import time
 import datetime
 import os
 import pprint
-from hdfcredrecoengine.settings import HOSTIP, HOSTUSER, HOSTPASWD
+
+#from hdfcredrecoengine.settings import HOSTIP, HOSTUSER, HOSTPASWD
+HOSTIP = '52.35.25.23'
+HOSTUSER = 'ITadmin'
+HOSTPASWD = 'ITadmin'
 
 class DataCleaner:
     def __init__(self):
@@ -146,7 +150,7 @@ class DataCleaner:
             X_clicked3.append(x_clic)
         results = self.KNN.get_optimum_neighbours(X, X_clicked3)
 
-        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:100]]
+        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
         return final_output
 
     def get_recommendations(self, project_config_No):
@@ -195,8 +199,11 @@ class DataCleaner:
             if len(project_config_No) > 0:
                 re_weighted_sear = np.append(X_clicked2, re_weighted_sear, axis=0)
             results = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
-            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:50]]
-            
+            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:250]]
+            try:
+                print 'INDEX', final_output.index(23516)
+            except:
+                pass
             final_reults = self.reco_filter(final_output, project_config_No)
             final_reults = [x for x in final_reults if x not in project_config_No]
 
@@ -218,13 +225,14 @@ class DataCleaner:
         amenities_pref = 1.0 + (preferences.index('amenities') - 2.0)/10
 #         poss_pref *= 2.0
         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
-        self.weights = [7, 7, 2.5, 0, 1.5, 1, 7, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
+        #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
+        self.weights = [9, 9, 2.5, 0, 2.5, 1, 8, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         print self.weights
         self.weights[0] *= location_pref
         self.weights[1] *= location_pref
         self.weights[6] *= budget_pref
         self.weights[8] *= poss_pref
-        self.weights[4] *= bhk_pref
+        self.weights[4] = bhk_pref * bhk_pref * self.weights[4]
         self.weights[9] *= amenities_pref
         self.weights[10] *= amenities_pref
         self.weights[11] *= amenities_pref
@@ -266,13 +274,14 @@ class DataCleaner:
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
-    lis = [43199, 41989, 20297]
+    #lis = [43199, 41989, 20297]
 
-    pref_list = ['budget','location','bhk','possession','amenities']
+    pref_list = ['budget','bhk','possession','amenities','location']
 
-    search_parameters = [{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.827567000000000","Project_config_No":None,"Map_Latitude":"19.194291000000000","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.832754686438760","Project_config_No":None,"Map_Latitude":"19.206685585502232","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.852032000000000","Project_config_No":None,"Map_Latitude":"19.221384000000000","No_Of_Balconies":None}]
+    #search_parameters = [{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.827567000000000","Project_config_No":None,"Map_Latitude":"19.194291000000000","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.832754686438760","Project_config_No":None,"Map_Latitude":"19.206685585502232","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.852032000000000","Project_config_No":None,"Map_Latitude":"19.221384000000000","No_Of_Balconies":None}]
     a = time.time()
-    print DC.develop_dummy_listing(search_parameters, lis, pref_list)
+    s= [{"Category":None,"Built_Up_Area":None,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":6000000,"PricePerUnit":None,"No_Of_Bedroom":3,"Possession":30,"Project_City_Name":"pune","amenities":["Swimming Pool","Gym"],"Map_Longitude":"73.9367","Project_config_No":None,"Map_Latitude":"18.5204","No_Of_Balconies":None}]
+    print DC.develop_dummy_listing(s, [], pref_list)
 
 
     # b = DC.get_recommendations(lis)
