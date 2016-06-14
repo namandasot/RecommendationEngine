@@ -1,5 +1,7 @@
 ## Budget Above 3cr Done
 ## Movein :  Anytime and > 3yrs
+## Ready for possesion
+
 
 import numpy as np
 
@@ -435,7 +437,10 @@ class scroingSystemForWebsite:
 			if(posession <= searchPosession):
 				score = self.scoringMax
 				flag  = 1 
+
 				text = "This home can be yours after " + posessionDate
+				if(posessionDate == "Ready for Possession"):
+					text = "This home is " + posessionDate
 			else:
 				diff = posession- searchPosession
 				if(diff < self.oneYear):
@@ -465,7 +470,10 @@ class scroingSystemForWebsite:
 				"""
 
 				text = "This home can be yours only after " + posessionDate
-
+				if(posessionDate == "Ready for Possession"):
+					text = "This home is " + posessionDate , " ", diff
+					# flag =1
+					# score = self.scoringMax
 			score = score/self.scoreScaling
 			dictionary = {self.textStr : text, self.scoreStr : score, self.flagStr : bool(flag)}
 			posessionScoreList.append(dictionary)
