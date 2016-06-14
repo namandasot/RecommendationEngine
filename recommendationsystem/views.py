@@ -22,7 +22,7 @@ def getPossessionDays(possessionDate):
     except:
         return 0
     d2 = dtime.strptime(str(datetime.date.today()), "%Y-%m-%d")
-    days = (d2 - d1).days
+    days = (d1 - d2).days
     if days<0:
         return 0
     else:
