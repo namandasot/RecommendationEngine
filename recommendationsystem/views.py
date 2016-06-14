@@ -128,7 +128,8 @@ class NewSearch(APIView):
 
 
 def getProjectAttr(recoPropInfoList):
-    recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList))
+#     print '##################' + recoPropInfoList
+    recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList).exclude(config_type='LAND'))
     recommendedPropertiesAllData.sort(key=lambda t: recoPropInfoList.index(t.pk))
     
     recommendedProperties = []
