@@ -29,11 +29,15 @@ def showRecoProjectsNewSearch(request):
 def showMap(request,search,past,recoList,relevantList):
     finalResult = []
     for reco in recoList:
+        
         recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=reco))
         recommendedPropertiesAllData.sort(key=lambda t: reco.index(t.pk))
         for i,recommendedPropertieAllData in enumerate(recommendedPropertiesAllData):
 #             print recommendedPropertieAllData.project_config_no
             for relevant in relevantList:
+                feedback = ""
+                score = 0
+
                 if relevant['Project_Config_No']==recommendedPropertieAllData.project_config_no:
 #                     print relevant
                     score=relevant['relevance_score']['total_score']
