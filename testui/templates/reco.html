@@ -546,9 +546,9 @@ color:#FF0000;
 	<div>
 		<table class="table table-hover table-bordered table-striped">
 			<tr>
-				<th>Sr. No.</th>
+				<th>Rel Rank</th>
 				<th>config no</th>
-				<th>Rank</th>
+				<th>Reco Rank</th>
 				<th>Score</th>
 				<th>Locality</th>
 				<!-- <th>built up area</th> -->
@@ -694,7 +694,7 @@ function initMap() {
 		  {% endif %}
 		  
 		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-			  content: '<div><h4>{{project.project_config_no}}</h4><b>Sr. No</b> : {{forloop.counter}}<br><b>Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+			  content: '<div><h4>{{project.project_config_no}}</h4><b>Reco Rank</b> : {{ recoProjectDict.rank }}<br><b>Rel Rank</b> : {{forloop.counter}}<br><b>Rel Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
 			  
 		  });
 		  
@@ -719,7 +719,7 @@ function initMap() {
 		  });
 		  
 		  var infowindowOther{{forloop.counter}} = new google.maps.InfoWindow({
-			  content: '<div><h4>{{project.project_config_no}}</h4><b>Sr. No</b> : {{forloop.counter}}<br><b>Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+			  content: '<div><h4>{{project.project_config_no}}</h4><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
 			  
 		  });
 		  
