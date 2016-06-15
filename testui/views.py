@@ -27,7 +27,7 @@ def showRecoProjectsNewSearch(request):
     return showMap(request,search_params,[],recommendedProperties,relevantProperties)
     
 def showMap(request,search,past,recoList,relevantList):
-    finalResult = []
+    finalResult = {}
     for reco in recoList:
         
         recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=reco))
@@ -43,14 +43,18 @@ def showMap(request,search,past,recoList,relevantList):
                     score=relevant['relevance_score']['total_score']
                     feedback = relevant['relevance_score']
                     break
-            finalResult.append({'rank':i+1,'project':recommendedPropertieAllData,'score':score,'feedback':feedback})
+            if finalResult.has_key(recommendedPropertieAllData.project_config_no):
+                if finalResult[recommendedPropertieAllData.project_config_no]['rank'] > i+1:
+                    finalResult[recommendedPropertieAllData.project_config_no]['rank'] = i+1
+            else:
+                finalResult[recommendedPropertieAllData.project_config_no] = {'rank':i+1,'project':recommendedPropertieAllData,'score':score,'feedback':feedback}
 #     print finalResult
     
 #     pastPrj = []
 #     if past:
 #         pastPrj = list(AllProjectInfo.objects.filter(project_config_no__in=past))
 #         pastPrj.sort(key=lambda t: past.index(t.pk))
-    finalResultNew = sorted(finalResult, key=lambda k: k['score'],reverse=True) 
+    finalResultNew = sorted(finalResult.values(), key=lambda k: k['score'],reverse=True)
     allProperties = AllProjectInfo.objects.filter(project_city_name=search[0]['Project_City_Name'])
     context = {'recoProjects' : finalResultNew, 'allProperties' : allProperties, 'search':search, 'past':None}
     return render(request, 'reco.html', context) 

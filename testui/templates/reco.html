@@ -548,7 +548,7 @@ color:#FF0000;
 			<tr>
 				<th>Sr. No.</th>
 				<th>config no</th>
-				<!-- <th>Rank</th> -->
+				<th>Rank</th>
 				<th>Score</th>
 				<th>Locality</th>
 				<!-- <th>built up area</th> -->
@@ -566,7 +566,7 @@ color:#FF0000;
 			<tr class="success" id=search{{forloop.counter}}>
 				<b>
 				<td></td>
-				<!-- <td></td> -->
+				<td></td>
 				<td></td><td></td>
 				<td></td>
 				<!-- <td>{{project.built_up_area}}</td> -->
@@ -586,7 +586,7 @@ color:#FF0000;
 				<b>
 				<td></td>
 				<td>{{project.project_config_no}}</td>
-				<!-- <td></td> --><td></td>
+				<td></td><td></td>
 				<td>{{project.project_area_name}},
 					{{project.project_suburb_name}}</td>
 				<!-- <td>{{project.built_up_area}}</td> -->
@@ -609,7 +609,7 @@ color:#FF0000;
 			<tr id=reco{{forloop.counter}}>
 				<td>{{forloop.counter}}</td>
 				<td>{{recoProject.project_config_no}}</td>
-				<!-- <td>{{recoProjectDict.rank}}</td> -->
+				<td>{{recoProjectDict.rank}}</td>
 				<td>{{recoProjectDict.score}}</td>
 				<td>{{recoProject.project_area_name}},
 					{{recoProject.project_suburb_name}}</td>
@@ -663,15 +663,31 @@ function initMap() {
 	  
 	  {% endfor %} 
 	  
-	  
+	  var pinIcon = new google.maps.MarkerImage(
+			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|CCCCCC",
+			    null, /* size is determined at runtime */
+			    null, /* origin is 0,0 */
+			    null, /* anchor is bottom center of the scaled image */
+			    new google.maps.Size(10, 14)
+	);
 	  
 	  {% for recoProjectDict in recoProjects %}
 	  	{% with project=recoProjectDict.project %}
+	  	
+	  	 {% if forloop.counter < 100 %}
 		  var marker{{forloop.counter}} = new google.maps.Marker({
 			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 			    map: map,
-			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|00FF00|000000'
+			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{recoProjectDict.rank}}|00FF00|000000'
 		  });
+		  {% else %}
+		  var marker{{forloop.counter}} = new google.maps.Marker({
+			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+			    map: map,
+			    icon: pinIcon
+		  });
+		  
+		  {% endif %}
 		  
 		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
 			  content: '<div><h4>{{project.project_config_no}}</h4>{{project.possession_text}}<br> BHK : {{project.no_of_bedroom}}<br>Price : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><br>Amineties : {{project.amenities}}</div>',
@@ -688,13 +704,7 @@ function initMap() {
 		  {% endwith %}
 	  {% endfor %}
 
-	  var pinIcon = new google.maps.MarkerImage(
-			    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|CCCCCC",
-			    null, /* size is determined at runtime */
-			    null, /* origin is 0,0 */
-			    null, /* anchor is bottom center of the scaled image */
-			    new google.maps.Size(10, 14)
-	);
+	 
 	  
       {% for project in allProperties %}
 	  

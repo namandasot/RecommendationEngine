@@ -199,7 +199,7 @@ class DataCleaner:
             if len(project_config_No) > 0:
                 re_weighted_sear = np.append(X_clicked2, re_weighted_sear, axis=0)
             results = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
-            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:250]]
+            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:2000]]
             try:
                 print 'INDEX', final_output.index(23516)
             except:
@@ -226,7 +226,7 @@ class DataCleaner:
 #         poss_pref *= 2.0
         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
-        self.weights = [9, 9, 2.5, 0, 2.5, 1, 8, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
+        self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         print self.weights
         self.weights[0] *= location_pref
         self.weights[1] *= location_pref
