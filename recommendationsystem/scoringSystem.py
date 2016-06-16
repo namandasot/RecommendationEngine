@@ -271,7 +271,7 @@ class scroingSystemForWebsite:
 						# print "x"
 
 					if(score > 85):
-						text = "Property is within your budget"
+						text = "Property is within your current search budget Range"
 						flag = 1
 					elif(score > 60):
 						text = "Property is slightly above your budget"
