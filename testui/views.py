@@ -17,19 +17,25 @@ def showRecoProjectsUser(request):
 
 def showRecoProjectsNewSearch(request):
     newsearch_params = getNewSearchResults1(request)
-    
+    pastProp = request.GET.get('past',None)
+    pastPropList = []
+    pastConfigData = []
+    propertyListInt = []
+    if pastProp:
+        pastPropList = pastProp.split(',')
+        for project in pastPropList:
+            propertyListInt.append(long(project))
     search_params = getSearchParamDict(newsearch_params)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','))
-    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),propertyListInt)
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,propertyListInt)
     print newsearch_params
     print search_params
     
-    return showMap(request,search_params,[],recommendedProperties,relevantProperties)
+    return showMap(request,search_params,propertyListInt,recommendedProperties,relevantProperties)
     
 def showMap(request,search,past,recoList,relevantList):
     finalResult = {}
     for reco in recoList:
-        
         recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=reco))
         recommendedPropertiesAllData.sort(key=lambda t: reco.index(t.pk))
         for i,recommendedPropertieAllData in enumerate(recommendedPropertiesAllData):
@@ -48,15 +54,12 @@ def showMap(request,search,past,recoList,relevantList):
                     finalResult[recommendedPropertieAllData.project_config_no]['rank'] = i+1
             else:
                 finalResult[recommendedPropertieAllData.project_config_no] = {'rank':i+1,'project':recommendedPropertieAllData,'score':score,'feedback':feedback}
-#     print finalResult
-    
-#     pastPrj = []
-#     if past:
-#         pastPrj = list(AllProjectInfo.objects.filter(project_config_no__in=past))
-#         pastPrj.sort(key=lambda t: past.index(t.pk))
+
     finalResultNew = sorted(finalResult.values(), key=lambda k: k['score'],reverse=True)
     allProperties = AllProjectInfo.objects.filter(project_city_name=search[0]['Project_City_Name'])
-    context = {'recoProjects' : finalResultNew, 'allProperties' : allProperties, 'search':search, 'past':None}
+    pastList = list(AllProjectInfo.objects.filter(project_config_no__in=past))
+    pastList.sort(key=lambda t: past.index(t.pk))
+    context = {'recoProjects' : finalResultNew, 'allProperties' : allProperties, 'search':search, 'past':pastList}
     return render(request, 'reco.html', context) 
     
     

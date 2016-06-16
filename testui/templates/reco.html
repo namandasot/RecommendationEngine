@@ -563,7 +563,7 @@ color:#FF0000;
 			</tr>
 			
 			{% for project in search %}
-			<tr class="success" id=search{{forloop.counter}}>
+			<tr class="warning" id=search{{forloop.counter}}>
 				<b>
 				<td></td>
 				<td></td>
@@ -586,12 +586,12 @@ color:#FF0000;
 				<b>
 				<td></td>
 				<td>{{project.project_config_no}}</td>
-				<td></td><td></td>
+				<td></td>
+				<td></td>
 				<td>{{project.project_area_name}},
 					{{project.project_suburb_name}}</td>
 				<!-- <td>{{project.built_up_area}}</td> -->
 				<td>{{project.possession_text}}</td>
-
 				<td>{{project.no_of_bedroom}}</td>
 				<td>{% widthratio project.minimum_price 100000 1 %}</td>
 				<!-- <td>{{project.category}}</td> -->
@@ -613,15 +613,11 @@ color:#FF0000;
 				<td>{{recoProjectDict.score|floatformat:2}}</td>
 				<td>{{recoProject.project_area_name}},
 					{{recoProject.project_suburb_name}}</td>
-				<!-- <td>{{recoProject.built_up_area}}</td> -->
 				<td>{{recoProject.possession_text}}</td>
-
 				<td>{{recoProject.no_of_bedroom}}</td>
-				<!-- <td>{{recoProject.no_of_bathroom}}</td> -->
 				<td>{% widthratio recoProject.minimum_price 100000 1 %}</td>
-				<!-- <td>{{recoProject.category}}</td> -->
 				<td>{{recoProject.amenities}}</td>
-				<td><b>Budjet</b>({{recoProjectDict.feedback.budget.flag}}){{recoProjectDict.feedback.budget.text}}(<b>Score:</b>{{recoProjectDict.feedback.budget.score|floatformat:2}})<br>
+				<td><b>Budget</b>({{recoProjectDict.feedback.budget.flag}}){{recoProjectDict.feedback.budget.text}}(<b>Score:</b>{{recoProjectDict.feedback.budget.score|floatformat:2}})<br>
 				<b>Locality</b>({{recoProjectDict.feedback.location.flag}}){{recoProjectDict.feedback.location.text}}(<b>Score:</b>{{recoProjectDict.feedback.location.score|floatformat:2}})<br>
 				<b>BHK</b>({{recoProjectDict.feedback.bhk.flag}}){{recoProjectDict.feedback.bhk.text}}(<b>Score:</b>{{recoProjectDict.feedback.bhk.score|floatformat:2}})<br>
 				<b>Amenities</b>({{recoProjectDict.feedback.amenities.flag}}){{recoProjectDict.feedback.amenities.text}}(<b>Score:</b>{{recoProjectDict.feedback.amenities.score|floatformat:2}})<br>
@@ -649,12 +645,13 @@ function initMap() {
 		  var markerPast{{forloop.counter}} = new google.maps.Marker({
 		    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 		    map: map,
+		    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|FF00FF|000000'
+				 
 		  });
 	      
 		  var infowindowPast{{forloop.counter}} = new google.maps.InfoWindow({
-			  content: '<div><h4>{{project.project_config_no}}</h4><b>Sr. No</b> : {{forloop.counter}}<br><b>Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
-			  zIndex: 100,
-			  maxWidth: 100,
+			  content: '<div><h4>{{project.project_config_no}}</h4><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+
 		  });
 		  
 		  markerPast{{forloop.counter}}.addListener('click', function() {
@@ -673,38 +670,38 @@ function initMap() {
 			    null, /* origin is 0,0 */
 			    null, /* anchor is bottom center of the scaled image */
 			    new google.maps.Size(10, 14)
-	);
+		);
 	  
 	  {% for recoProjectDict in recoProjects %}
 	  	{% with project=recoProjectDict.project %}
 	  	
-	  	 {% if forloop.counter < 100 %}
-		  var marker{{forloop.counter}} = new google.maps.Marker({
-			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
-			    map: map,
-			    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{recoProjectDict.rank}}|00FF00|000000'
-		  });
-		  {% else %}
-		  var marker{{forloop.counter}} = new google.maps.Marker({
-			    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
-			    map: map,
-			    icon: pinIcon
-		  });
-		  
-		  {% endif %}
-		  
-		  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
-			  content: '<div><h4>{{project.project_config_no}}</h4><b>Reco Rank</b> : {{ recoProjectDict.rank }}<br><b>Rel Rank</b> : {{forloop.counter}}<br><b>Rel Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+		  	 {% if forloop.counter < 100 %}
+				  var marker{{forloop.counter}} = new google.maps.Marker({
+					    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+					    map: map,
+					    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{recoProjectDict.rank}}|00FF00|000000'
+				  });
+			  {% else %}
+				  var marker{{forloop.counter}} = new google.maps.Marker({
+					    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
+					    map: map,
+					    icon: pinIcon
+			  });
 			  
-		  });
+			  {% endif %}
 		  
-		  marker{{forloop.counter}}.addListener('click', function() {
-			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
-		  });
-		  
-		  document.getElementById("reco{{forloop.counter}}").addEventListener('click', function() {
-			    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
-		  });
+			  var infowindow{{forloop.counter}} = new google.maps.InfoWindow({
+				  content: '<div><h4>{{project.project_config_no}}</h4><b>Reco Rank</b> : {{ recoProjectDict.rank }}<br><b>Rel Rank</b> : {{forloop.counter}}<br><b>Rel Score</b> : {{recoProjectDict.score|floatformat:2}}<br><b>Possession</b> : {{project.possession_text}}<br><b>BHK</b> : {{project.no_of_bedroom}}<br><b>Price</b> : {% widthratio project.minimum_price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+				  
+			  });
+			  
+			  marker{{forloop.counter}}.addListener('click', function() {
+				    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+			  });
+			  
+			  document.getElementById("reco{{forloop.counter}}").addEventListener('click', function() {
+				    infowindow{{forloop.counter}}.open(map, marker{{forloop.counter}});
+			  });
 		  {% endwith %}
 	  {% endfor %}
 
@@ -731,28 +728,28 @@ function initMap() {
 	  
 	  {% for project in search %}
 	  
-	  var markerMain{{forloop.counter}} = new google.maps.Marker({
-	    position: {lat: {{project.Map_Latitude}}, lng: {{project.Map_Longitude}}},
-	    map: map,
-	    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|0000FF|000000'
-			  
-	  });
-      
-	  var infowindowMain{{forloop.counter}} = new google.maps.InfoWindow({
-		  content: '<div><b>Possession</b> : {{project.Possession}} Days<br><b>BHK</b> : {{project.No_Of_Bedroom}}<br><b>Budget</b> : {% widthratio project.Minimum_Price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
-		  zIndex: 100,
-		  maxWidth: 100,
-	  });
-	  
-	  markerMain{{forloop.counter}}.addListener('click', function() {
-		    infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
-	  });
-	  
-	  document.getElementById("search{{forloop.counter}}").addEventListener('click', function() {
-		  infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
-  	   });
-	  
-  {% endfor %}
+		  var markerMain{{forloop.counter}} = new google.maps.Marker({
+		    position: {lat: {{project.Map_Latitude}}, lng: {{project.Map_Longitude}}},
+		    map: map,
+		    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld={{forloop.counter}}|0000FF|000000'
+				  
+		  });
+	      
+		  var infowindowMain{{forloop.counter}} = new google.maps.InfoWindow({
+			  content: '<div><b>Possession</b> : {{project.Possession}} Days<br><b>BHK</b> : {{project.No_Of_Bedroom}}<br><b>Budget</b> : {% widthratio project.Minimum_Price 100000 1 %} Lakhs<br><b>Amineties</b> : {{project.amenities}}</div>',
+			  zIndex: 100,
+			  maxWidth: 100,
+		  });
+		  
+		  markerMain{{forloop.counter}}.addListener('click', function() {
+			    infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+		  });
+		  
+		  document.getElementById("search{{forloop.counter}}").addEventListener('click', function() {
+			  infowindowMain{{forloop.counter}}.open(map, markerMain{{forloop.counter}});
+	  	   });
+		  
+	  {% endfor %}
 	  
 	}
 

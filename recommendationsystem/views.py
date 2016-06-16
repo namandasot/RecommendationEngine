@@ -3,7 +3,7 @@ from rest_framework.renderers import JSONRenderer
 from recommendationsystem.NewRecommender import DataCleaner
 from models import *
 from serializers import AllProjectInfoSerializer,AllProjectInfoMailerSerializer
-from mongoConnect import MongoConnectionForWebsite
+from mongoConnectRecoNew import MongoConnectionForWebsite
 import time
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -92,43 +92,50 @@ def getSearchParamDict(newsearch_params):
         search_params.append(search_param)
     return search_params
 
-def getRecom(search_params,prefList):
+def getRecom(search_params,prefList,past):
     search_paramsCopy = copy.deepcopy(search_params)
-    recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, [],prefList)
+    recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList)
     return recommendedProperties
 
-def getRel(newsearch_params,search_params,recommendedProperties):
+def getRel(newsearch_params,search_params,recommendedProperties,past):
     searchParams = search_params
     preferanceList = newsearch_params.preference.split(',')
     recoPropInfoList = []
     for recoProperties in recommendedProperties:
         recoPropInfoList.extend(recoProperties)
     recoPropAttrList = getProjectAttr(recoPropInfoList)
-    pastPropAttrList = []
-    relevantProperties = Scoring.getScores(searchParams,pastPropAttrList,recoPropAttrList,preferanceList)
-    # Sort the properties based on their final score and limit them as per the input 
+    pastConfigData = getProjectAttr(past)
+    relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
     return relevantProperties
 
-def getPast():
-    pass
+def getPastConfig(userId,date):
+    return MCFW.getNewFootprint(userId,date)
 
 def getNewSearchResults(request):
     limit = request.GET.get('limit',20)
     newsearch_params = getNewSearchResults1(request)
     search_params = getSearchParamDict(newsearch_params)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','))
-    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),[])
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,[])
+    return relevantProperties
+
+def getNewSearchResultsFootPrint(request):
+    limit = request.GET.get('limit',20)
+    userId = request.GET.get('user_cookie_id',None)
+    newsearch_params = NewSearchParams.objects.get(userId=userId)
+    search_params = getSearchParamDict(newsearch_params)
+    pastConfigs = getPastConfig(userId,newsearch_params.modified)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs)
+    pastConfigData = getProjectAttr(pastConfigs)
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     return relevantProperties
 
 class NewSearch(APIView):
     def get(self, request):
-        return Response(getNewSearchResults(request))
-
-
+        return Response(getNewSearchResultsFootPrint(request))
 
 
 def getProjectAttr(recoPropInfoList):
-#     print '##################' + recoPropInfoList
     recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList).exclude(config_type='LAND'))
     recommendedPropertiesAllData.sort(key=lambda t: recoPropInfoList.index(t.pk))
     
@@ -153,43 +160,14 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 
-
-
 def intC(temp):
     no = int(temp) if temp else None
     return no
 
 
-
-    
-    
 class NewReco(APIView):
     def get(self, request):    
-        limit = request.GET.get('limit',20)
-        userId = request.GET.get('user_cookie_id',None)
-        newsearch_params = NewSearchParams.objects.get(userId=userId)
-        print newsearch_params
-        search_params = getSearchParamDict(newsearch_params)
-        # modify footprint method
-        footprints = MCFW.getNewFootprint(userId,newsearch_params.modified)
-        recommendedProperties = DC.develop_dummy_listing(search_params, [], newsearch_params.preference.split(','))
-        print recommendedProperties
-        #scoring function
-
-        searchParams = search_params
-        preferanceList = newsearch_params.preference.split(',')
-    
-        recoPropInfoList = []
-        for recoProperties in recommendedProperties:
-            recoPropInfoList.extend(recoProperties)
-        recoPropAttrList = getProjectAttr(recoPropInfoList)
-        print recoPropAttrList
-        
-        pastPropAttrList = getProjectAttr(footprints)
-        # call scoring method
-        relevantProperties = Scoring.getScores(searchParams,pastPropAttrList,recoPropAttrList,preferanceList)
-        print relevantProperties
-        return Response(JSONResponse(relevantProperties))
+        return Response(getNewSearchResults(request))
 
 def testRecoIds(request):
     ia = time.time()
@@ -206,7 +184,7 @@ def testRecoIds(request):
     print 'Recommendation time', time.time() - b
     return recoIds(request,recommendedProperties)
 
-
+'''No use now'''
 def getProjectIds(request, userId):
     
     properties=request.GET.get('properties',None)
