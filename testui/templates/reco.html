@@ -675,7 +675,7 @@ function initMap() {
 	  {% for recoProjectDict in recoProjects %}
 	  	{% with project=recoProjectDict.project %}
 	  	
-		  	 {% if forloop.counter < 100 %}
+		  	 {% if forloop.counter < 100 and recoProjectDict.score > 0 %}
 				  var marker{{forloop.counter}} = new google.maps.Marker({
 					    position: {lat: {{project.map_latitude}}, lng: {{project.map_longitude}}},
 					    map: map,

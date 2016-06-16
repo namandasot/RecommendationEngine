@@ -24,10 +24,9 @@ class scroingSystemForWebsite:
 		self.projectConfigNumber = "Project_Config_No"
 		self.budgetMaxInput = "30000000"
 		self.posessionMaxInput = 365*3
-
-
+		
 		self.fullScoreDistInKm = 5
-		self.leastScoreDistInKm = 20
+		self.leastScoreDistInKm = 25
 		self.weights = [1,0.8,0.6,0.4,0.3,0.2,0.1,0,0,0,0,0,0,0,0]
 		self.scoringMax  = 100
 		self.scoringMin = 10
@@ -40,7 +39,7 @@ class scroingSystemForWebsite:
 		self.twoYear = 750
 		self.fiveYear = 1900
 		self.scoreScaling = 10.0
-
+		self.scoringMinLocation = -25.0
 		self.filterArray = [1]
 
 	# Search Params : 
@@ -210,6 +209,7 @@ class scroingSystemForWebsite:
 					self.filterArray[i] = 0
 					score = 0
 				else:
+					score = 0
 					if(bhk in pastBHK) : 
 						factor = (pastBHK.index(bhk) + 1)*2
 						# print factor
@@ -349,8 +349,9 @@ class scroingSystemForWebsite:
 		locationScoreList = []
 		flag = 0
 		text = ""
+		enumi = -1
 		for lat,lon,loc in zip(recoLatitude,recoLongitude,recoLocation):
-			
+			enumi += 1
 			flag =0
 			minDist = 1000
 			minDistLocation = searchParams[0][self.locationName]
@@ -380,10 +381,13 @@ class scroingSystemForWebsite:
 
 
 			else :
-				score = self.getLineValue(0,self.leastScoreDistInKm,minDist)
-				score = max(score,self.scoringMin)
+				score = self.getLineValueAll(0,self.scoringMax,self.leastScoreDistInKm,self.scoringMinLocation,minDist)
+				score = max(score,self.scoringMinLocation)
 				loc = loc.split(",")[0]
-				text = "Sorry the property is in " + loc + ", but is only " + str(round(minDist,1)) + "km away from " + minDistLocation
+				text = "The property is in " + loc + ", it is " + str(round(minDist,1)) + "km away from " + minDistLocation
+				if(minDist > 25):
+					self.filterArray[enumi] = 0
+					
 
 			score = score/self.scoreScaling
 			dictionary = {self.textStr : text, self.scoreStr : score , self.flagStr : bool(flag)}
