@@ -92,9 +92,14 @@ def getSearchParamDict(newsearch_params):
         search_params.append(search_param)
     return search_params
 
-def getRecom(search_params,prefList,past):
+def getRecom(search_params,prefList,past,input_weights):
     search_paramsCopy = copy.deepcopy(search_params)
-    recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList)
+    if input_weights:
+        input_weights = input_weights.split(',')
+        input_weights = map(int, input_weights)
+        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList,input_weights)
+    else:
+        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList)
     return recommendedProperties
 
 def getRel(newsearch_params,search_params,recommendedProperties,past):
@@ -115,7 +120,8 @@ def getNewSearchResults(request):
     limit = request.GET.get('limit',20)
     newsearch_params = getNewSearchResults1(request)
     search_params = getSearchParamDict(newsearch_params)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),[])
+    input_weights = request.GET.get('input_weights',None)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),[],input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,[])
     return relevantProperties
 
@@ -125,7 +131,8 @@ def getNewSearchResultsFootPrint(request):
     newsearch_params = NewSearchParams.objects.get(userId=userId)
     search_params = getSearchParamDict(newsearch_params)
     pastConfigs = getPastConfig(userId,newsearch_params.modified)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs)
+    input_weights = request.GET.get('input_weights',None)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     pastConfigData = getProjectAttr(pastConfigs)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     return relevantProperties

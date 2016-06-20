@@ -26,7 +26,8 @@ def showRecoProjectsNewSearch(request):
         for project in pastPropList:
             propertyListInt.append(long(project))
     search_params = getSearchParamDict(newsearch_params)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),propertyListInt)
+    input_weights = request.GET.get('input_weights',None)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),propertyListInt,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,propertyListInt)
     print newsearch_params
     print search_params
