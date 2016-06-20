@@ -226,9 +226,9 @@ class DataCleaner:
 #         poss_pref *= 2.0
         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
-        self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
+        self.weights = [6.5, 6.5, 2.5, 0, 3, 1, 7, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         print self.weights
-        self.weights[0] *= location_pref
+        self.weights[0] *= location_pref**3
         self.weights[1] *= location_pref
         self.weights[6] *= budget_pref
         self.weights[8] *= poss_pref
