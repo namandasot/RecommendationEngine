@@ -210,14 +210,14 @@ class DataCleaner:
             final_recommendations.append(final_reults)
         return final_recommendations
 
-    def develop_dummy_listing(self, search_parameters, project_config_No, preferences):
+    def develop_dummy_listing(self, search_parameters, project_config_No, preferences, input_weights = [5, 5, 5, 5, 5]):
+        'input_weights = [Location, price, bhk, possession, amenities]'
         data_dict = {}
         project_city_dict = {}
         project_config_dict = {}
         category = []
         city1 = ''
         preferences.reverse()
-        
         location_pref = 1.0 + (preferences.index('location') - 2.0)/10
         budget_pref = 1.0 + (preferences.index('budget') - 2.0)/10
         bhk_pref = 1.0 + (preferences.index('bhk') - 2.0)/10
@@ -226,21 +226,21 @@ class DataCleaner:
 #         poss_pref *= 2.0
         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
-        self.weights = [6.5, 6.5, 2.5, 0, 3, 1, 7, 0, 0.8, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
+        self.weights = [6.5/5, 6.5/5, 2.5, 0, 3/5, 1, 7/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
         print self.weights
-        self.weights[0] *= location_pref**3
-        self.weights[1] *= location_pref
-        self.weights[6] *= budget_pref
-        self.weights[8] *= poss_pref
-        self.weights[4] = bhk_pref * bhk_pref * self.weights[4]
-        self.weights[9] *= amenities_pref
-        self.weights[10] *= amenities_pref
-        self.weights[11] *= amenities_pref
-        self.weights[12] *= amenities_pref
-        self.weights[13] *= amenities_pref
-        self.weights[14] *= amenities_pref
-        self.weights[15] *= amenities_pref
-        self.weights[16] *= amenities_pref
+        self.weights[0] *= input_weights[0] * (location_pref ** 3)
+        self.weights[1] *= input_weights[0] * location_pref
+        self.weights[6] *= input_weights[1] * (budget_pref ** 3)
+        self.weights[8] *= input_weights[3] * poss_pref
+        self.weights[4] *= input_weights[2] * (bhk_pref ** 2)
+        self.weights[9] *= input_weights[4] * amenities_pref
+        self.weights[10] *= input_weights[4] * amenities_pref
+        self.weights[11] *= input_weights[4] * amenities_pref
+        self.weights[12] *= input_weights[4] * amenities_pref
+        self.weights[13] *= input_weights[4] * amenities_pref
+        self.weights[14] *= input_weights[4] * amenities_pref
+        self.weights[15] *= input_weights[4] * amenities_pref
+        self.weights[16] *= input_weights[4] * amenities_pref
         print self.weights
         for i, ele in enumerate(search_parameters):
             attributes = []
