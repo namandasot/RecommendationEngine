@@ -11,7 +11,7 @@ MCFW = MongoConnectionForWebsite()
 def showRecoProjectsUser(request):
     userId = request.GET.get('user',None)
     propertyListInt = MCFW.getFootprint(userId)
-    print propertyListInt
+#     print propertyListInt
     return getRecommendation(request,propertyListInt)
 
 
@@ -29,8 +29,8 @@ def showRecoProjectsNewSearch(request):
     input_weights = request.GET.get('input_weights',None)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),propertyListInt,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,propertyListInt)
-    print newsearch_params
-    print search_params
+#     print newsearch_params
+#     print search_params
     
     return showMap(request,search_params,propertyListInt,recommendedProperties,relevantProperties)
     
@@ -66,12 +66,12 @@ def showMap(request,search,past,recoList,relevantList):
     
 def getRecommendation(request,propertyListInt):
     recoProjectsIds = DC.get_recommendations(propertyListInt)[:10]
-    print recoProjectsIds
+#     print recoProjectsIds
     projects = []
     for project in propertyListInt:
         projects.append(AllProjectInfo.objects.get(project_config_no=project))
 
-    print projects
+#     print projects
     recoProjects = []
     for recoProjectsId in recoProjectsIds :
         recoProjects.append(AllProjectInfo.objects.get(project_config_no=recoProjectsId))
@@ -82,5 +82,5 @@ def getRecommendation(request,propertyListInt):
 
 def showRecoProjects(request):
     propertyListInt = getProjectIds(request, '')
-    print propertyListInt
+#     print propertyListInt
     return getRecommendation(request,propertyListInt)

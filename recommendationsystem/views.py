@@ -111,7 +111,18 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
     recoPropAttrList = getProjectAttr(recoPropInfoList)
     pastConfigData = getProjectAttr(past)
     relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
+    relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
+    relevantProperties = filterSameProjectNo(relevantProperties)
     return relevantProperties
+
+def filterSameProjectNo(relevantProperties):
+    relevantPropertiesFiltered = []
+    projectNo = []
+    for rp in relevantProperties:
+        if rp['Project_No'] not in projectNo:
+            projectNo.append(rp['Project_No'])
+            relevantPropertiesFiltered.append(rp)
+    return relevantPropertiesFiltered
 
 def getPastConfig(userId,date):
     return MCFW.getNewFootprint(userId,date)

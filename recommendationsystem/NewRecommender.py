@@ -200,12 +200,12 @@ class DataCleaner:
                 re_weighted_sear = np.append(X_clicked2, re_weighted_sear, axis=0)
             results = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
             final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:10000]]
-            try:
-                print 'INDEX', final_output.index(23516)
-            except:
-                pass
-            final_reults = self.reco_filter(final_output, project_config_No)
-            final_reults = [x for x in final_reults if x not in project_config_No]
+#             try:
+#                 print 'INDEX', final_output.index(23516)
+#             except:
+#                 pass
+#             final_reults = self.reco_filter(final_output, project_config_No)
+            final_reults = [x for x in final_output if x not in project_config_No]
 
             final_recommendations.append(final_reults)
         return final_recommendations
@@ -224,10 +224,10 @@ class DataCleaner:
         poss_pref = 1.0 + (preferences.index('possession') - 2.0)/10
         amenities_pref = 1.0 + (preferences.index('amenities') - 2.0)/10
 #         poss_pref *= 2.0
-        print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
+#         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
         self.weights = [6.5/5, 6.5/5, 2.5, 0, 3/5, 1, 7/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
-        print self.weights
+#         print self.weights
         self.weights[0] *= input_weights[0] * (location_pref ** 3)
         self.weights[1] *= input_weights[0] * location_pref
         self.weights[6] *= input_weights[1] * (budget_pref ** 3)
@@ -241,7 +241,7 @@ class DataCleaner:
         self.weights[14] *= input_weights[4] * amenities_pref
         self.weights[15] *= input_weights[4] * amenities_pref
         self.weights[16] *= input_weights[4] * amenities_pref
-        print self.weights
+#         print self.weights
         for i, ele in enumerate(search_parameters):
             attributes = []
             ele['Project_config_No'] = 'search'+str(i)
