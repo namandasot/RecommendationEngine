@@ -226,6 +226,7 @@ class DataCleaner:
 #         poss_pref *= 2.0
 #         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
+        #lat,long,area,balcony,bhk,bathroom,price,category,possession,price_unit,garden,gym,outdoor_sports,swimming_pool,vastu,recreational_act,parking,health_care,gas_pipelines
         self.weights = [6.5/5, 6.5/5, 2.5, 0, 3/5, 1, 7/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
 #         print self.weights
         self.weights[0] *= input_weights[0] * (location_pref ** 3)

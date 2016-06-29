@@ -94,12 +94,14 @@ def getSearchParamDict(newsearch_params):
 
 def getRecom(search_params,prefList,past,input_weights):
     search_paramsCopy = copy.deepcopy(search_params)
+    pastCopy = copy.deepcopy(past)
+    prefListCopy = copy.deepcopy(prefList)
     if input_weights:
         input_weights = input_weights.split(',')
         input_weights = map(int, input_weights)
-        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList,input_weights)
+        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, pastCopy, prefListCopy, input_weights)
     else:
-        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, past,prefList)
+        recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, pastCopy, prefListCopy)
     return recommendedProperties
 
 def getRel(newsearch_params,search_params,recommendedProperties,past):
