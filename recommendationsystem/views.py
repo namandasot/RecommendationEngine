@@ -50,7 +50,7 @@ def getSearchParamDict(newsearch_params):
         amenitiesCodes = newsearch_params.amenities.split(',')
         amenitiesList = Amenity.objects.values_list('amenity_name', flat=True).filter(amenity_code__in=amenitiesCodes)
     else:
-        amenitiesList=None
+        amenitiesList=[]
     search_params = []
     if newsearch_params.lat_longs:
         localities_name = newsearch_params.localities.split(',')
@@ -130,13 +130,15 @@ def getPastConfig(userId,date):
     return MCFW.getNewFootprint(userId,date)
 
 def getNewSearchResults(request):
-    limit = request.GET.get('limit',20)
+    limit = int(request.GET.get('limit',20))
+    print 'limit ############',
+    print limit
     newsearch_params = getNewSearchResults1(request)
     search_params = getSearchParamDict(newsearch_params)
     input_weights = request.GET.get('input_weights',None)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),[],input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,[])
-    return relevantProperties
+    return relevantProperties[:limit]
 
 def getNewSearchResultsFootPrint(request):
     limit = request.GET.get('limit',20)
