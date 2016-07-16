@@ -1,25 +1,43 @@
 import copy
+# Function to make a copy
+
 from KNN_Search import KNN_Search
+# Function imported from KNN_Search.py which is implementation of K Nearest Neighbour Algorithm
+
 from sklearn.neighbors import NearestNeighbors
+# calling Scikit Learn's Nearest Neighbors object
+
 import numpy as np
+# Importing Numpy for Python-Numerical analysis (linear algebra)
+
 import MySQLdb
+#MySQLdb for building connection with MySQL Database
+
 import time
 import datetime
 import os
+
 import pprint
+# pprint for pretty printing
+
 
 #from hdfcredrecoengine.settings import HOSTIP, HOSTUSER, HOSTPASWD
 HOSTIP = '52.35.25.23'
 HOSTUSER = 'ITadmin'
 HOSTPASWD = 'ITadmin'
+# Host UserID and Password
 
 class DataCleaner:
+# Defining an object/class named DataCleaner.
+    # Constructor- Initilization of object
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
         self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city = self.get_workable_data()
         self.weights = [9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         self.KNN = KNN_Search()
 
+
+    # Reading Aminities class from a textfile to classify aminities 
     def aminites_class_reader(self):
         amneties_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'aminities_class.txt')
         fil = open(amneties_file).read().strip().split('\n')
@@ -29,6 +47,8 @@ class DataCleaner:
             aminity_class[line[0].lower().strip()] = line[1].lower().strip()
         return aminity_class
 
+
+    # Function to clean Aminities Texual data
     def aminities_cleaner(self, text):
         if text:
             text = text.split(',')
@@ -37,6 +57,8 @@ class DataCleaner:
         else:
             return []
 
+
+    # function to process possession text to return number of days left in possession
     def process_possession(self, text_date):
         try:
             possion_days = (datetime.date.today() - text_date).days
@@ -46,6 +68,7 @@ class DataCleaner:
         except:
             return 0.0
 
+    # Processing attributes of property to develop a vector 
     def process_row(self, row1, data_dict, project_city_dict, project_config_dict, category, process_poss=True):
         project_config_dict[row1[1]] = row1[0]
         row1 = list(row1)
@@ -89,6 +112,8 @@ class DataCleaner:
         data_dict[row[1]]['attributes'].append(r)
         return data_dict, project_city_dict, project_config_dict, category
 
+
+    # Developing connection with MySQL database
     def connect_data(self):
         data_dict = {}
         project_id_dict = {}
@@ -105,6 +130,7 @@ class DataCleaner:
         return data_dict, project_city_dict, project_config_dict
 
 
+    # Storing data attributes after normalization in nested dictonary format 
     def get_workable_data(self):
         organised_data, project_city_dict, project_config_dict = self.connect_data()
         normalization_factors = {}
@@ -118,6 +144,8 @@ class DataCleaner:
             organised_data[city]['attributes'] = x_normed
         return organised_data, project_city_dict, project_config_dict, normalization_factors, stdev_city
 
+
+    # Weighting and bringing variability equals to one.
     def get_weighted_x(self, X):
         #mumbai = [300, 300, 2, 0, 10, 1, 100, 1, 1, 1, 1, 1, 5.5, 1, 0, 2, 0, 0.7]
         stdev = np.ndarray.std(X, 0)
@@ -125,12 +153,16 @@ class DataCleaner:
         X *= self.weights
         return X
 
+
+    # Reweighting attributes as per the attributes of previously visited properties 
     def get_reweighted(self, X, X_clicked):
         click_stdev = np.ndarray.std(np.array(X_clicked),0)
         X = X / (click_stdev+1)
         X_clicked = X_clicked/(click_stdev+1)
         return X, X_clicked, click_stdev
 
+
+    # Function to weight and rewight and then pass to KNN recommender. 
     def simple_knn_recommender(self, city, project_config_No):
         X1 = self.workable_data[city]['attributes']
         X = copy.deepcopy(X1)
@@ -153,6 +185,8 @@ class DataCleaner:
         final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
         return final_output
 
+
+    # Getting the recommendations and filtering them out.
     def get_recommendations(self, project_config_No):
         #city = self.project_city.get(project_config_No)
         cities = self.project_city.get(project_config_No[0])
@@ -161,6 +195,8 @@ class DataCleaner:
         final_reults = [x for x in final_reults if x not in project_config_No]
         return final_reults
 
+
+    # Function to filter recommendations
     def reco_filter(self, reco_list, project_config_No):
         filtered_reco_list = []
         reco_project_list = []
@@ -176,7 +212,7 @@ class DataCleaner:
                 reco_project_list.append(project_of_config)
         return filtered_reco_list
 
-
+    # Recommednation engine function to encorporate search results
     def simple_knn_Search_recommender(self, city, search_X, project_config_No):
         X1 = self.workable_data[city]['attributes']
         X = copy.deepcopy(X1)
@@ -210,6 +246,8 @@ class DataCleaner:
             final_recommendations.append(final_reults)
         return final_recommendations
 
+
+    # Function to develop dummy listings from search paramentes and then forwarding them to recommendation engine.
     def develop_dummy_listing(self, search_parameters, project_config_No, preferences, input_weights = [5, 5, 5, 5, 5]):
         'input_weights = [Location, price, bhk, possession, amenities]'
         data_dict = {}
@@ -272,6 +310,8 @@ class DataCleaner:
         # self.simple_knn_Search_recommender(city, organised_dataa[city1]['attributes'])
 
 
+
+# Main function to make test cases and test the pipeline locally.
 if __name__ == '__main__':
     mum = []
     DC = DataCleaner()
