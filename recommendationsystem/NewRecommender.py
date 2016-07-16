@@ -1,3 +1,14 @@
+'''
+Modified K-Nearest Neighbor based recommendation Engine for real easte listing recommendation
+Input: Project Config Numbers and search parameters
+Output: Recommended Project Config Numbers
+
+Developer: Vikas Bharti
+Company: HDFC Developers Ltd
+'''
+
+
+
 import copy
 # Function to make a copy
 
