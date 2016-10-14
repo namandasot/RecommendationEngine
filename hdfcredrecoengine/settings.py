@@ -15,7 +15,7 @@ import os
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HOSTIP = '52.35.25.23'
+HOSTIP = '52.66.177.232'
 HOSTUSER = 'ITadmin'
 HOSTPASWD = 'ITadmin'
 # Quick-start development settings - unsuitable for production
