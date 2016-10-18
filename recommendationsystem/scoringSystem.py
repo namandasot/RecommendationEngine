@@ -124,10 +124,10 @@ class scroingSystemForWebsite:
 		listFinal = np.array(listFinal)
 				
 		listFinal = listFinal[self.filterArray==1]
-# 		
-# 		for i,a in enumerate(listFinal):
-# 			for b in a:
-# 				print i, b , a[b]
+		
+		for i,a in enumerate(listFinal):
+			for b in a:
+				print i, b , a[b]
 
 		return listFinal
 
@@ -233,7 +233,7 @@ class scroingSystemForWebsite:
 		budgetMeanAndStd = self.getModifiedStdDev(pastBudget,searchBudget)
 		budgetMean = budgetMeanAndStd[0]
 		budgetStd = budgetMeanAndStd[1]
-		
+		# print "Bidget ", budgetMeanAndStd
 		budgetScoreList  = []
 		flag = 0
 		text = ""
@@ -412,7 +412,7 @@ class scroingSystemForWebsite:
 		skewedVar = sum(skewedVar) + (((currSearch - skewedMean)*self.currSearchWeight)**2)
 		# skewedVar = skewedVar/lengthArray
 		skewedVar = skewedVar/(lengthArray+1)
-
+		
 		skewedStd = np.sqrt(skewedVar)
 		returnList = [skewedMean, skewedStd]
 

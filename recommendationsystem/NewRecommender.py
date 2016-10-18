@@ -33,7 +33,7 @@ import pprint
 
 
 #from hdfcredrecoengine.settings import HOSTIP, HOSTUSER, HOSTPASWD
-HOSTIP = '52.35.25.23'
+HOSTIP = '52.66.177.232'
 HOSTUSER = 'ITadmin'
 HOSTPASWD = 'ITadmin'
 # Host UserID and Password
