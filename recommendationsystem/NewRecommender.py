@@ -19,6 +19,7 @@ from sklearn.neighbors import NearestNeighbors
 # calling Scikit Learn's Nearest Neighbors object
 
 import numpy as np
+import pandas as pd
 # Importing Numpy for Python-Numerical analysis (linear algebra)
 
 import MySQLdb
@@ -29,6 +30,7 @@ import datetime
 import os
 
 import pprint
+from docutils.nodes import organization
 # pprint for pretty printing
 
 
@@ -43,7 +45,7 @@ class DataCleaner:
     # Constructor- Initilization of object
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
-        self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city = self.get_workable_data()
+        self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city,self.median = self.get_workable_data() # dinesh
         self.weights = [9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         self.KNN = KNN_Search()
 
@@ -107,10 +109,10 @@ class DataCleaner:
         data_dict[row[1]]['project_id'].append(row[0])
         r = []
         for val in row[2:]:
-            if val in ['', 'NONE']:
+            if val in ['', 'NONE']:     
                 r.append(0.0)
             elif val == 'AFFORDABLE':
-                 r.append(1.0)
+                r.append(1.0)
             elif val == 'MID_RANGE':
                 r.append(2.0)
             elif val == 'MID_RANGE':
@@ -123,7 +125,52 @@ class DataCleaner:
         data_dict[row[1]]['attributes'].append(r)
         return data_dict, project_city_dict, project_config_dict, category
 
+    # new process_raw for input data dinesh
+    def new_process_row(self, row1, data_dict, project_city_dict, project_config_dict, category, medain,process_poss=True):
+        project_config_dict[row1[1]] = row1[0]
+        row1 = list(row1)
+        row1[2] = row1[2].lower()
+        row = row1[1:]
+        if not data_dict.has_key(row[1]):
+            data_dict[row[1]] = {'project_id':[], 'attributes':[]}
+        aminities = row[-1]
+        category.append(row[-3])
+        aminitie = self.aminities_cleaner(aminities)
+        class_list = [self.aminity_class.get(x, '') for x in aminitie]
+        class_list = list(set(class_list))
+        class_list = [x for x in class_list if x != '']
+        aminities_class_list =['garden', 'gym', 'outdoor sports', 'swimming pool', 'vastu', 'recreational activities', 'parking', 'health care', 'gas pipelines']
+        row = list(row[:-2])
+        if process_poss == True:
+            row[-1] = self.process_possession(row[-1])
 
+        for aminity in aminities_class_list:
+            if aminity in class_list:
+                row.append(1)
+            else:
+                row.append(0)
+        project_city_dict[row[0]] = row[1]
+        data_dict[row[1]]['project_id'].append(row[0])
+        r = []
+        for val in row[2:]:
+            if val in ['', 'NONE']:
+                temp_var = medain[row1[2]]     
+                r.append(temp_var)
+            elif val == 'AFFORDABLE':
+                r.append(1.0)
+            elif val == 'MID_RANGE':
+                r.append(2.0)
+            elif val == 'MID_RANGE':
+                r.append(3.0)
+            else:
+                try:
+                    r.append(float(val))
+                except:
+                    r.append(0.0)
+        data_dict[row[1]]['attributes'].append(r)
+        return data_dict, project_city_dict, project_config_dict, category
+    # new process_raw ended dinesh
+    
     # Developing connection with MySQL database
     def connect_data(self):
         data_dict = {}
@@ -143,17 +190,38 @@ class DataCleaner:
 
     # Storing data attributes after normalization in nested dictonary format 
     def get_workable_data(self):
-        organised_data, project_city_dict, project_config_dict = self.connect_data()
+        organised_data, project_city_dict, project_config_dict = self.connect_data() ## what will this do
+        #for i in organised_data.shape[1]:
+            #temp_median = np.median(organised_data[:,i])
         normalization_factors = {}
         stdev_city = {}
+        city_median = {}   # added by dinesh
+        city_mean = {}
+        city_missing = {}
         for city in organised_data:
+            temp_data = np.array(organised_data[city]['attributes']).astype(np.float) #dinesh
+            city_median[city] = np.median(temp_data,axis = 0)                         #dinesh
+            city_mean[city] = np.mean(temp_data,axis = 0)                             #dinesh
+            city_missing[city] = copy.deepcopy(city_median[city])
             x = np.array(organised_data[city]['attributes']).astype(np.float)
-            x_normed = (x - x.min(axis=0))/(x.max(axis=0)-x.min(axis=0))
+            temp_min = x.min(axis = 0)
+            temp_max = x.max(axis = 0)
+            temp = np.array(temp_max - temp_min)
+            for z in range(len(temp)):
+                if temp[z] == 0:
+                    temp[z] = 1
+                else:
+                    temp[z] = temp[z]
+            temp_norm = np.array(x - temp_min)
+            #for z in range(len(x[:,0])):    
+            x_normed = (x - x.min(axis=0))/temp
+            
             stdev_city[city] = np.ndarray.std(x_normed, 0)
 
             normalization_factors[city] = {'x_min': x.min(axis=0), 'x_max':x.max(axis=0)}
             organised_data[city]['attributes'] = x_normed
-        return organised_data, project_city_dict, project_config_dict, normalization_factors, stdev_city
+    
+        return organised_data, project_city_dict, project_config_dict, normalization_factors, stdev_city,city_median 
 
 
     # Weighting and bringing variability equals to one.
@@ -279,7 +347,7 @@ class DataCleaner:
         self.weights = [6.5/5, 6.5/5, 2.5, 0, 3/5, 1, 7/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
 #         print self.weights
         self.weights[0] *= input_weights[0] * (location_pref ** 3)
-        self.weights[1] *= input_weights[0] * location_pref
+        self.weights[1] *= input_weights[0] * (location_pref** 3)
         self.weights[6] *= input_weights[1] * (budget_pref ** 3)
         self.weights[8] *= input_weights[3] * poss_pref
         self.weights[4] *= input_weights[2] * (bhk_pref ** 2)
@@ -295,11 +363,12 @@ class DataCleaner:
         for i, ele in enumerate(search_parameters):
             attributes = []
             ele['Project_config_No'] = 'search'+str(i)
+            #print ele['Project_config_No']
             ele['amenities'] = ','.join(ele['amenities'])
             attribute_names = ['Project_No', 'Project_config_No', 'Project_City_Name', 'Map_Latitude', 'Map_Longitude', 'Built_Up_Area', 'No_Of_Balconies', 'No_Of_Bedroom', 'No_Of_Bathroom', 'Minimum_Price', 'Category', 'Possession', 'PricePerUnit', 'amenities']
             for attr in attribute_names:
                 attributes.append(ele[attr])
-            organised_dataa, project_city_dict, project_config_dict, category = self.process_row(attributes, data_dict, project_city_dict, project_config_dict, category, process_poss=False)
+            organised_dataa, project_city_dict, project_config_dict, category = self.new_process_row(attributes, data_dict, project_city_dict, project_config_dict, category,self.median, process_poss=False,)
         for i, city in enumerate(organised_dataa):
             if i == 0:
                 city1 = city
@@ -324,6 +393,7 @@ class DataCleaner:
 
 # Main function to make test cases and test the pipeline locally.
 if __name__ == '__main__':
+    print "Started"
     mum = []
     DC = DataCleaner()
     #lis = [43199, 41989, 20297]
@@ -334,7 +404,7 @@ if __name__ == '__main__':
     a = time.time()
     s= [{"Category":None,"Built_Up_Area":None,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":6000000,"PricePerUnit":None,"No_Of_Bedroom":3,"Possession":30,"Project_City_Name":"pune","amenities":["Swimming Pool","Gym"],"Map_Longitude":"73.9367","Project_config_No":None,"Map_Latitude":"18.5204","No_Of_Balconies":None}]
     print DC.develop_dummy_listing(s, [], pref_list)
-
+    print "Done"
 
     # b = DC.get_recommendations(lis)
     # print b
