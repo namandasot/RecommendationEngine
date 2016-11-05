@@ -107,11 +107,18 @@ def getRecom(search_params,prefList,past,input_weights):
 def getRel(newsearch_params,search_params,recommendedProperties,past):
     searchParams = search_params
     preferanceList = newsearch_params.preference.split(',')
+    pastPropInfoList = []
     recoPropInfoList = []
+    print "Done1"
     for recoProperties in recommendedProperties:
         recoPropInfoList.extend(recoProperties)
     recoPropAttrList = getProjectAttr(recoPropInfoList)
-    pastConfigData = getProjectAttr(past)
+    
+    print "Done " , past
+    for a in past:
+        pastPropInfoList.append(a["Project_Config_No"])
+    pastConfigData = getProjectAttr(pastPropInfoList)
+    print "Not Done"
     relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
     relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
     relevantProperties = filterSameProjectNo(relevantProperties)
@@ -127,7 +134,7 @@ def filterSameProjectNo(relevantProperties):
     return relevantPropertiesFiltered
 
 def getPastConfig(userId,date):
-    return MCFW.getNewFootprint(userId,date)
+    return MCFW.getFootprint(userId,date)
 
 def getNewSearchResults(request):
     limit = int(request.GET.get('limit',20))
@@ -139,6 +146,32 @@ def getNewSearchResults(request):
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),[],input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,[])
     return relevantProperties[:limit]
+
+def getNewSearchResultsModified(request):
+    limit = int(request.GET.get('limit',10))
+    print 'limit ############',
+    print limit
+    newsearch_params = getNewSearchResults1(request)
+    search_params = getSearchParamDict(newsearch_params)
+    input_weights = request.GET.get('input_weights',None)
+    
+    pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
+    print "Past " , pastConfigs
+
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    pastConfigData = getProjectAttr(pastConfigs)
+    print "Reco Complete"
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
+    print "Rel Complete"
+    relProjConfigId = getConfigId(relevantProperties)
+    print "relProjConfigId Complete"
+    a = str(datetime.datetime.now())
+    
+    MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
+    print "Inserted"
+    print relevantProperties[:limit]
+    return relevantProperties[:limit]
+
 
 def getNewSearchResultsFootPrint(request):
     limit = request.GET.get('limit',20)
@@ -152,13 +185,55 @@ def getNewSearchResultsFootPrint(request):
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     return relevantProperties
 
+def getNewSearchResultsFootPrintModified(request):
+    limit = request.GET.get('limit',10)
+    userId = request.GET.get('user_cookie_id',None)
+    newsearch_params = NewSearchParams.objects.get(userId=userId)
+    search_params = getSearchParamDict(newsearch_params)
+    pastConfigs = getPastConfig(userId,"2016-01-01")
+    input_weights = request.GET.get('input_weights',None)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    pastConfigData = getProjectAttr(pastConfigs)
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
+    pastShownData = MCFW.getFromMongo(userId)
+    relProjConfigId = getConfigId(relevantProperties)
+    i =0
+    returnList = []
+    returnListConfig = []
+    for prop,propAtr in zip(relProjConfigId,relevantProperties):
+        if prop not in pastShownData:
+            returnList.append(propAtr)
+            returnListConfig.append(prop)
+            
+        if len(returnListConfig) >= limit:
+            break
+    
+    totalProp = returnListConfig + pastShownData
+    
+    a = str(datetime.datetime.now())
+    MCFW.insertToMongo(totalProp , userId,a)
+    return returnList
+
+def getConfigId(propDictArray):
+    configArr = []
+    for ele in propDictArray:
+        configArr.append(ele["Project_Config_No"])
+    return configArr
+
+
+    
+
+
 class NewSearch(APIView):
     def get(self, request):
-        return Response(getNewSearchResultsFootPrint(request))
+        #return Response(getNewSearchResultsFootPrint(request))
+        return Response(getNewSearchResultsFootPrintModified(request))
 
 
 def getProjectAttr(recoPropInfoList):
+    print "recoPropInfoList" , recoPropInfoList
     recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList))
+    print recommendedPropertiesAllData
     recommendedPropertiesAllData.sort(key=lambda t: recoPropInfoList.index(t.pk))
     
     recommendedProperties = []
@@ -189,7 +264,8 @@ def intC(temp):
 
 class NewReco(APIView):
     def get(self, request):    
-        return Response(getNewSearchResults(request))
+        #return Response(getNewSearchResults(request))
+        return Response(getNewSearchResultsModified(request))
 
 def testRecoIds(request):
     ia = time.time()
