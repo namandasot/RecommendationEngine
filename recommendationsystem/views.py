@@ -200,6 +200,7 @@ def getNewSearchResultsFootPrintModified(request):
     i =0
     returnList = []
     returnListConfig = []
+    print "relProjConfigId ", relProjConfigId
     for prop,propAtr in zip(relProjConfigId,relevantProperties):
         if prop not in pastShownData:
             returnList.append(propAtr)
@@ -207,7 +208,7 @@ def getNewSearchResultsFootPrintModified(request):
             
         if len(returnListConfig) >= limit:
             break
-    
+    print returnListConfig
     totalProp = returnListConfig + pastShownData
     
     a = str(datetime.datetime.now())

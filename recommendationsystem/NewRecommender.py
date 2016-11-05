@@ -30,7 +30,7 @@ import datetime
 import os
 
 import pprint
-from docutils.nodes import organization
+# from docutils.nodes import organization
 # pprint for pretty printing
 
 
@@ -45,7 +45,7 @@ class DataCleaner:
     # Constructor- Initilization of object
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
-        self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city,self.median = self.get_workable_data() # dinesh
+        self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city,self.missing = self.get_workable_data() # dinesh
         self.weights = [9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         self.KNN = KNN_Search()
 
@@ -109,13 +109,13 @@ class DataCleaner:
         data_dict[row[1]]['project_id'].append(row[0])
         r = []
         for val in row[2:]:
-            if val in ['', 'NONE']:     
+            if not val:     
                 r.append(0.0)
             elif val == 'AFFORDABLE':
                 r.append(1.0)
             elif val == 'MID_RANGE':
                 r.append(2.0)
-            elif val == 'MID_RANGE':
+            elif val == 'LUXURY':
                 r.append(3.0)
             else:
                 try:
@@ -126,7 +126,7 @@ class DataCleaner:
         return data_dict, project_city_dict, project_config_dict, category
 
     # new process_raw for input data dinesh
-    def new_process_row(self, row1, data_dict, project_city_dict, project_config_dict, category, medain,process_poss=True):
+    def new_process_row(self, row1, data_dict, project_city_dict, project_config_dict, category, miss,process_poss=True):
         project_config_dict[row1[1]] = row1[0]
         row1 = list(row1)
         row1[2] = row1[2].lower()
@@ -152,15 +152,15 @@ class DataCleaner:
         project_city_dict[row[0]] = row[1]
         data_dict[row[1]]['project_id'].append(row[0])
         r = []
-        for val in row[2:]:
-            if val in ['', 'NONE']:
-                temp_var = medain[row1[2]]     
+        for ind,val in enumerate(row[2:]):
+            if not val :
+                temp_var = miss[row1[2]][ind]     
                 r.append(temp_var)
             elif val == 'AFFORDABLE':
                 r.append(1.0)
             elif val == 'MID_RANGE':
                 r.append(2.0)
-            elif val == 'MID_RANGE':
+            elif val == 'LUXURY':
                 r.append(3.0)
             else:
                 try:
@@ -203,6 +203,9 @@ class DataCleaner:
             city_median[city] = np.median(temp_data,axis = 0)                         #dinesh
             city_mean[city] = np.mean(temp_data,axis = 0)                             #dinesh
             city_missing[city] = copy.deepcopy(city_median[city])
+            for index,value in enumerate(city_missing[city]):
+                if index >8:
+                    city_missing[city][index] = city_mean[city][index]
             x = np.array(organised_data[city]['attributes']).astype(np.float)
             temp_min = x.min(axis = 0)
             temp_max = x.max(axis = 0)
@@ -221,7 +224,7 @@ class DataCleaner:
             normalization_factors[city] = {'x_min': x.min(axis=0), 'x_max':x.max(axis=0)}
             organised_data[city]['attributes'] = x_normed
     
-        return organised_data, project_city_dict, project_config_dict, normalization_factors, stdev_city,city_median 
+        return organised_data, project_city_dict, project_config_dict, normalization_factors, stdev_city,city_missing 
 
 
     # Weighting and bringing variability equals to one.
@@ -320,8 +323,9 @@ class DataCleaner:
 #             except:
 #                 pass
 #             final_reults = self.reco_filter(final_output, project_config_No)
-            final_reults = [x for x in final_output if x not in project_config_No]
 
+            #final_reults = [x for x in final_output if x not in project_config_No]
+            final_reults = final_output
             final_recommendations.append(final_reults)
         return final_recommendations
 
@@ -344,7 +348,7 @@ class DataCleaner:
 #         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
         #lat,long,area,balcony,bhk,bathroom,price,category,possession,price_unit,garden,gym,outdoor_sports,swimming_pool,vastu,recreational_act,parking,health_care,gas_pipelines
-        self.weights = [6.5/5, 6.5/5, 2.5, 0, 3/5, 1, 7/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
+        self.weights = [8.5/5, 8.5/5, 2.0, 0, 2.5/5, 1, 9.0/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
 #         print self.weights
         self.weights[0] *= input_weights[0] * (location_pref ** 3)
         self.weights[1] *= input_weights[0] * (location_pref** 3)
@@ -368,7 +372,7 @@ class DataCleaner:
             attribute_names = ['Project_No', 'Project_config_No', 'Project_City_Name', 'Map_Latitude', 'Map_Longitude', 'Built_Up_Area', 'No_Of_Balconies', 'No_Of_Bedroom', 'No_Of_Bathroom', 'Minimum_Price', 'Category', 'Possession', 'PricePerUnit', 'amenities']
             for attr in attribute_names:
                 attributes.append(ele[attr])
-            organised_dataa, project_city_dict, project_config_dict, category = self.new_process_row(attributes, data_dict, project_city_dict, project_config_dict, category,self.median, process_poss=False,)
+            organised_dataa, project_city_dict, project_config_dict, category = self.new_process_row(attributes, data_dict, project_city_dict, project_config_dict, category,self.missing, process_poss=False,)
         for i, city in enumerate(organised_dataa):
             if i == 0:
                 city1 = city
