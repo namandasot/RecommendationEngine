@@ -24,7 +24,7 @@ class MongoConnectionForWebsite:
                 propertyArray.append(int(projectNo))
             except:
                 pass
-        return propertyArray
+        return propertyArray[:10]
     
     def insertToMongo(self,propList,uniqueCookieId,timeStamp):
         insertDict = {"propList" : propList , "uniqueCookieId":uniqueCookieId,"timeStamp":timeStamp }
