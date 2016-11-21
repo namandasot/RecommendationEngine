@@ -120,7 +120,7 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
     pastConfigData = getProjectAttr(pastPropInfoList)
     print "Not Done"
     relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
-    relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
+    #relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
     relevantProperties = filterSameProjectNo(relevantProperties)
     return relevantProperties
 
