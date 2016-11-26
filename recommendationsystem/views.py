@@ -11,6 +11,12 @@ import datetime
 from datetime import datetime as dtime
 from recommendationsystem.scoringSystem import scroingSystemForWebsite
 import copy
+import numpy as np
+import requests
+import urllib2
+import urllib
+import json
+
 
 Scoring = scroingSystemForWebsite()
 DC = DataCleaner()  # to be moved to class based views
@@ -37,7 +43,7 @@ def getNewSearchResults1(request):
     newsearch_params.possession = intC(request.GET.get('possession',None))
     newsearch_params.bhk = intC(request.GET.get('bhk',None))
     newsearch_params.amenities = request.GET.get('amenities',None)
-    newsearch_params.lat_longs = request.GET.get('lat_longs',None)
+    newsearch_params.lat_longs = request.GET.get('lat_longs',None).encode('ascii','ignore')
     newsearch_params.preference = request.GET.get('preference',None)
     newsearch_params.localities = request.GET.get('locality',None)
     newsearch_params.area = intC(request.GET.get('area',None))
@@ -127,10 +133,18 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
 def filterSameProjectNo(relevantProperties):
     relevantPropertiesFiltered = []
     projectNo = []
-    for rp in relevantProperties:
-        if rp['Project_No'] not in projectNo:
-            projectNo.append(rp['Project_No'])
-            relevantPropertiesFiltered.append(rp)
+#     for rp in relevantProperties:
+#         if rp['Project_No'] not in projectNo:
+#             projectNo.append(rp['Project_No'])
+#             relevantPropertiesFiltered.append(rp)
+            
+    for rap in relevantProperties:
+        for rp in rap:
+            if rp not in projectNo:
+                projectNo.append(rp) 
+                relevantPropertiesFiltered.append(rap)
+            
+            
     return relevantPropertiesFiltered
 
 def getPastConfig(userId,date):
@@ -157,9 +171,21 @@ def getNewSearchResultsModified(request):
     
     pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
     print "Past " , pastConfigs
-
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    
     pastConfigData = getProjectAttr(pastConfigs)
+    
+    pastList = []
+    for a in search_params:
+        for pastCnfgDta in pastConfigData:
+            if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
+                if pastCnfgDta["Project_Config_No"] not in pastList:
+                    pastList.append(pastCnfgDta["Project_Config_No"])
+                    
+        
+    pastConfigs = pastList
+    pastConfigData = getProjectAttr(pastConfigs)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    
     print "Reco Complete"
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     print "Rel Complete"
@@ -169,8 +195,22 @@ def getNewSearchResultsModified(request):
     
     MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
     print "Inserted"
-    print relevantProperties[:limit]
-    return relevantProperties[:limit]
+    relevantProperties =  relevantProperties[:limit]
+    returnList = populateReturnList(relevantProperties)
+
+    return returnList
+    
+def getDistanceinKM(lat1,lon1,lat2,lon2):
+        R = 6371  # radius of the earth in km
+        lat1 = np.radians(float(lat1))
+        lat2 = np.radians(float(lat2))
+        lon1 = np.radians(float(lon1))
+        lon2 = np.radians(float(lon2))
+        x = (lon2 - lon1) * np.cos( 0.5*(lat2+lat1) )
+
+        y = lat2 - lat1
+        d = R * np.sqrt( x*x + y*y )
+        return d
 
 
 def getNewSearchResultsFootPrint(request):
@@ -192,8 +232,21 @@ def getNewSearchResultsFootPrintModified(request):
     search_params = getSearchParamDict(newsearch_params)
     pastConfigs = getPastConfig(userId,"2016-01-01")
     input_weights = request.GET.get('input_weights',None)
-    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     pastConfigData = getProjectAttr(pastConfigs)
+
+    pastList = []
+    for a in search_params:
+        for pastCnfgDta in pastConfigData:
+            if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
+                if pastCnfgDta["Project_Config_No"] not in pastList:
+                    pastList.append(pastCnfgDta["Project_Config_No"])
+                    
+        
+    pastConfigs = pastList
+    pastConfigData = getProjectAttr(pastConfigs)
+
+    
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     pastShownData = MCFW.getFromMongo(userId)
     relProjConfigId = getConfigId(relevantProperties)
@@ -213,12 +266,43 @@ def getNewSearchResultsFootPrintModified(request):
     
     a = str(datetime.datetime.now())
     MCFW.insertToMongo(totalProp , userId,a)
+    returnList = populateReturnList(returnList)
     return returnList
+
+
+def populateReturnList(returnList):
+    method = "POST"
+    handler = urllib2.HTTPHandler()
+    opener = urllib2.build_opener(handler)
+     
+    url = "http://35.154.46.79/apimaster/mobile_v3/recoengine_web"
+    
+#     data = {"data":[{"5230":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}, "11":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}}]}
+    data = {"data": returnList}
+    request = urllib2.Request(url, data=json.dumps(data["data"]))
+    request.add_header("Content-Type",'application/json')
+    request.get_method = lambda: method
+    try:
+        connection = opener.open(request)
+        print "Done"
+    except urllib2.HTTPError,e:
+        connection = e
+    
+    # check. Substitute with appropriate HTTP code.
+    if connection.code == 200:
+        data = connection.read()
+        return data
+    else:
+        print "except"
+
+    
 
 def getConfigId(propDictArray):
     configArr = []
     for ele in propDictArray:
-        configArr.append(ele["Project_Config_No"])
+        for a in ele:
+            configArr.append(ele[a]["Project_Config_No"])
+#             configArr.append(ele["Project_Config_No"])
     return configArr
 
 
@@ -240,7 +324,10 @@ def getProjectAttr(recoPropInfoList):
     recommendedProperties = []
     for recoProperty in recommendedPropertiesAllData:
         propDict = AllProjectInfoSerializer(recoProperty).data
-        propDict['No_Of_Bedroom'] = float(str(propDict['No_Of_Bedroom']))
+        try:
+            propDict['No_Of_Bedroom'] = float(str(propDict['No_Of_Bedroom']))
+        except:
+            propDict['No_Of_Bedroom'] = None
 #         print propDict['No_Of_Bedroom']
         propDict['Possession'] = getPossessionDays(propDict['Possession'])
         propDict['locality_name'] = propDict['Project_Area_Name'] +', '+ propDict['Project_Suburb_Name'] +', ' +propDict['Project_City_Name']

@@ -32,8 +32,9 @@ class MongoConnectionForWebsite:
         return 1
     
     def getFromMongo(self,uniqueCookieId):
-        result = self.collection1.find({"uniqueCookieId":uniqueCookieId}).sort("tsDate",-1).limit(1)
+        result = self.collection1.find({"uniqueCookieId":uniqueCookieId}).sort("timeStamp",-1).limit(1)
         for a in result:
+            print "get From mongo ", a["propList"]
             return a["propList"]
         return []
         

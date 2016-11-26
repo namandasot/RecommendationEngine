@@ -264,7 +264,7 @@ class DataCleaner:
             X_clicked3.append(x_clic)
         results = self.KNN.get_optimum_neighbours(X, X_clicked3)
 
-        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
+        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:50]]
         return final_output
 
 

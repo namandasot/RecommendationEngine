@@ -72,12 +72,13 @@ class scroingSystemForWebsite:
 		if(searchParams[0][self.posession]):
 			posessionScore = self.getPosessionScore(searchParams,recoPropAttrList)
 
-		# print projectNo
-		# print "locationScore " ,locationScore
-		# print "amenitiesScore " , amenitiesScore
-		# print "budgetScores ",budgetScores
-		# print "bhkScore ",bhkScore
-		# print "posessionScore ",posessionScore
+		print projectNo
+# 		print "locationScore " ,len(locationScore)
+# 		print "amenitiesScore " , len(amenitiesScore)
+# 		print "budgetScores ",len(budgetScore)
+# 		print "bhkScore ",len(bhkScore)
+# 		print "posessionScore ",len(posessionScore)
+# 		print len(projectNo)
 
 		listFinal = []
 		for i,projectNum in enumerate(projectNo):
@@ -118,6 +119,7 @@ class scroingSystemForWebsite:
 
 			#dictionary1 = {"budget": budgetScores[i],"location": locationScore[i],"bhk":bhkScore[i],"possession": posessionScore[i],"amenity" : amenitiesScore[i]}
 			dictionary = {self.projectNumber : projectNum, self.projectConfigNumber : projectConfigNo[i] , "relevance_score":dictionary1}
+			dictionary = {str(projectNum) : {"relevance_score":dictionary1 ,self.projectConfigNumber : projectConfigNo[i] ,self.projectNumber : projectNum}}
 			listFinal.append(dictionary)
 
 		self.filterArray = np.array(self.filterArray)
@@ -443,6 +445,10 @@ class scroingSystemForWebsite:
 						
 				if(posessionDate == "Contact Seller For Possession"):
 					text = "Please " + posessionDate
+				score = score/self.scoreScaling
+				dictionary = {self.textStr : text, self.scoreStr : score, self.flagStr : bool(flag)}
+				posessionScoreList.append(dictionary)
+
 				continue
 
 			if(posession <= searchPosession):
