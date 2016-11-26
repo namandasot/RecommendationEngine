@@ -291,7 +291,7 @@ def populateReturnList(returnList):
     # check. Substitute with appropriate HTTP code.
     if connection.code == 200:
         data = connection.read()
-        return data
+        return json.loads(data)
     else:
         print "except"
 
