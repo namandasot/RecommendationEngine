@@ -116,7 +116,7 @@ class scroingSystemForWebsite:
 			# print score
 			score = min(9.8,score)
 			dictionary1[ "total_score"] = score
-
+			dictionary1[ "total_score"] = 0
 			#dictionary1 = {"budget": budgetScores[i],"location": locationScore[i],"bhk":bhkScore[i],"possession": posessionScore[i],"amenity" : amenitiesScore[i]}
 			dictionary = {self.projectNumber : projectNum, self.projectConfigNumber : projectConfigNo[i] , "relevance_score":dictionary1}
 			dictionary = {str(projectNum) : {"relevance_score":dictionary1 ,self.projectConfigNumber : projectConfigNo[i] ,self.projectNumber : projectNum}}
