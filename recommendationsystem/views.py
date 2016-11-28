@@ -327,7 +327,7 @@ def getProjectAttr(recoPropInfoList):
         try:
             propDict['No_Of_Bedroom'] = float(str(propDict['No_Of_Bedroom']))
         except:
-            propDict['No_Of_Bedroom'] = None
+            propDict['No_Of_Bedroom'] = 0
 #         print propDict['No_Of_Bedroom']
         propDict['Possession'] = getPossessionDays(propDict['Possession'])
         propDict['locality_name'] = propDict['Project_Area_Name'] +', '+ propDict['Project_Suburb_Name'] +', ' +propDict['Project_City_Name']
