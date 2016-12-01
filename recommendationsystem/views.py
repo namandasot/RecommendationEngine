@@ -47,6 +47,7 @@ def getNewSearchResults1(request):
     newsearch_params.preference = request.GET.get('preference',None)
     newsearch_params.localities = request.GET.get('locality',None)
     newsearch_params.area = intC(request.GET.get('area',None))
+    newsearch_params.config_type = request.GET.get('propertytype',None)
     newsearch_params.save()
     return newsearch_params
 
@@ -78,6 +79,7 @@ def getSearchParamDict(newsearch_params):
             search_param['Map_Latitude']=lat_long.split('|')[0]
             search_param['Map_Longitude']=lat_long.split('|')[1]
             search_param['locality_name']=localities_name[idx]
+            search_param['Config_Type'] = newsearch_params.config_type
             search_params.append(search_param)
     else:
         search_param = {}
@@ -95,6 +97,8 @@ def getSearchParamDict(newsearch_params):
         search_param['amenities']=amenitiesList
         search_param['Map_Latitude']=None
         search_param['Map_Longitude']=None
+        search_param['Config_Type'] = newsearch_params.config_type
+
         search_params.append(search_param)
     return search_params
 
@@ -119,7 +123,8 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
     for recoProperties in recommendedProperties:
         recoPropInfoList.extend(recoProperties)
     recoPropAttrList = getProjectAttr(recoPropInfoList)
-    
+    for a in recoPropAttrList[0]:
+        print a , recoPropAttrList[0][a]
     print "Done " , past
     for a in past:
         pastPropInfoList.append(a["Project_Config_No"])
@@ -163,6 +168,8 @@ def getNewSearchResults(request):
 
 def getNewSearchResultsModified(request):
     limit = int(request.GET.get('limit',10))
+    propertytype = str(request.GET.get('propertytype','apartment')).lower()
+    
     print 'limit ############',
     print limit
     newsearch_params = getNewSearchResults1(request)
@@ -195,6 +202,7 @@ def getNewSearchResultsModified(request):
     
     MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
     print "Inserted"
+
     relevantProperties =  relevantProperties[:limit]
     returnList = populateReturnList(relevantProperties)
 

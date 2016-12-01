@@ -126,7 +126,7 @@ class NewSearchParams(models.Model):
     localities = models.CharField(max_length=200, blank=True, null=True)
     area = models.IntegerField(blank=True, null=True)
     modified = models.DateTimeField(auto_now=True)
-    
+    config_type = models.CharField(max_length=200, blank=True, null=True)    
     
 class Amenity(models.Model):
     amenity_code = models.IntegerField(primary_key=True)

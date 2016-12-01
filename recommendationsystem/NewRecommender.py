@@ -266,7 +266,7 @@ class DataCleaner:
             X_clicked3.append(x_clic)
         results = self.KNN.get_optimum_neighbours(X, X_clicked3)
 
-        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:50]]
+        final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
         return final_output
 
 
@@ -319,7 +319,7 @@ class DataCleaner:
             if len(project_config_No) > 0:
                 re_weighted_sear = np.append(X_clicked2, re_weighted_sear, axis=0)
             results = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
-            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:50]]
+            final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
 #             try:
 #                 print 'INDEX', final_output.index(23516)
 #             except:

@@ -24,6 +24,7 @@ class scroingSystemForWebsite:
 		self.projectConfigNumber = "Project_Config_No"
 		self.budgetMaxInput = "30000000"
 		self.posessionMaxInput = 365*3
+		self.Config_Type = "Config_Type"
 		
 		self.fullScoreDistInKm = 5
 		self.leastScoreDistInKm = 25
@@ -71,6 +72,9 @@ class scroingSystemForWebsite:
 		""" Posession """
 		if(searchParams[0][self.posession]):
 			posessionScore = self.getPosessionScore(searchParams,recoPropAttrList)
+		
+		if(searchParams[0][self.Config_Type]):
+			self.configFilter(searchParams,recoPropAttrList)
 
 		print projectNo
 # 		print "locationScore " ,len(locationScore)
@@ -126,13 +130,25 @@ class scroingSystemForWebsite:
 		listFinal = np.array(listFinal)
 				
 		listFinal = listFinal[self.filterArray==1]
-		
-		for i,a in enumerate(listFinal):
-			for b in a:
-				print i, b , a[b]
+# 		
+# 		for i,a in enumerate(listFinal):
+# 			for b in a:
+# 				print i, b , a[b]
 
 		return listFinal
 
+	def configFilter(self,searchParams,recoPropAttrList):
+		searchConfig = str(searchParams[0][self.Config_Type]).lower()
+		if searchConfig == "villa":
+			recoConfig = map (lambda x:x[self.Config_Type],recoPropAttrList)
+			for i,config in enumerate(recoConfig):
+				if config.lower() == "villa":
+					continue
+				else:
+					self.filterArray[i] = 0
+		
+		return
+	
 
 	def getAmenitiesScore(self,searchParams,recoPropAttrList):
 

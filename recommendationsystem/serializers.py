@@ -22,6 +22,8 @@ class AllProjectInfoSerializer(serializers.ModelSerializer):
     Project_City_Name= serializers.CharField(source='project_city_name')
     Project_Suburb_Name= serializers.CharField(source='project_suburb_name')
     Project_Area_Name= serializers.CharField(source='project_area_name')
+    Config_Type = serializers.CharField(source='config_type')
+
 
 #             search_param['Possession']=newsearch_params.possession
 #             search_param['amenities']=amenitiesList
@@ -29,7 +31,7 @@ class AllProjectInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AllProjectInfo
-        fields = ('Project_No','Project_Config_No','Map_Latitude','Map_Longitude','price','Possession','posessionDate','amenities','Built_Up_Area','No_Of_Bedroom','Project_City_Name','Project_Suburb_Name','Project_Area_Name')
+        fields = ('Project_No','Project_Config_No','Map_Latitude','Map_Longitude','price','Possession','posessionDate','amenities','Built_Up_Area','No_Of_Bedroom','Project_City_Name','Project_Suburb_Name','Project_Area_Name',"Config_Type")
 
 
 class AllProjectInfoMailerSerializer(serializers.ModelSerializer):
