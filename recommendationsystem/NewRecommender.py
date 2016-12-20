@@ -46,7 +46,7 @@ class DataCleaner:
     def __init__(self):
         self.aminity_class = self.aminites_class_reader()
         self.workable_data, self.project_city, self.project_config, self.normalization_factors, self.stdev_city,self.missing = self.get_workable_data() # dinesh
-        self.weights = [9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
+        self.weights = []#[9, 9, 2.5, 0, 1.5, 1, 8, 0, 0.9/3, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.6/3, 0, 0.5/3, 0, 0.5/3]
         self.KNN = KNN_Search()
 
 
@@ -318,7 +318,7 @@ class DataCleaner:
             re_weighted_sear = [sear]/(1+click_stdev)
             if len(project_config_No) > 0:
                 re_weighted_sear = np.append(X_clicked2, re_weighted_sear, axis=0)
-            results = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
+            results,cost  = self.KNN.get_optimum_neighbours(X,  re_weighted_sear)
             final_output = [self.workable_data[city]['project_id'][ele] for ele in results[:200]]
 #             try:
 #                 print 'INDEX', final_output.index(23516)
@@ -350,7 +350,7 @@ class DataCleaner:
 #         print location_pref,budget_pref,bhk_pref,poss_pref,amenities_pref
         #self.weights = [9, 9, 2.5, 0, 3, 1, 8, 0, 0.9/2, 0.6/3, 0.6/3, 0.6/3, 1/3, 0.1/3, 0, 0.09/3, 0, 0.09/3]
         #lat,long,area,balcony,bhk,bathroom,price,category,possession,price_unit,garden,gym,outdoor_sports,swimming_pool,vastu,recreational_act,parking,health_care,gas_pipelines
-        self.weights = [8.5/5, 8.5/5, 2.0, 0, 2.5/5, 1, 9.0/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
+        self.weights = [8.5/5, 8.5/5, 2.0, 0, 4.0/5, 1, 9.5/5, 0, 0.8/5, 0.2/5, 0.2/5, 0.2/5, 0.35/5, 0.2/5, 0, 0.18/5, 0, 0.18/5]
 #         print self.weights
         self.weights[0] *= input_weights[0] * (location_pref ** 3)
         self.weights[1] *= input_weights[0] * (location_pref** 3)

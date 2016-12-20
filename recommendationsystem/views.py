@@ -35,20 +35,30 @@ def getPossessionDays(possessionDate):
         return days
 
 
-def getNewSearchResults1(request):
+def getNewSearchResults1(request,similar=0):
     newsearch_params = NewSearchParams()
     newsearch_params.userId = request.GET.get('user_cookie_id',None)
     newsearch_params.budget = intC(request.GET.get('budget',None))
     newsearch_params.city = request.GET.get('city',None)
     newsearch_params.possession = intC(request.GET.get('possession',None))
     newsearch_params.bhk = intC(request.GET.get('bhk',None))
-    newsearch_params.amenities = request.GET.get('amenities',None)
-    newsearch_params.lat_longs = request.GET.get('lat_longs',None).encode('ascii','ignore')
-    newsearch_params.preference = request.GET.get('preference',None)
-    newsearch_params.localities = request.GET.get('locality',None)
+    newsearch_params.amenities = request.GET.get('amenityid',None)
+    newsearch_params.lati = request.GET.get('lat',None)
+    newsearch_params.longi = request.GET.get('long',None)
+    """
+    try:
+        newsearch_params.lat_longs = request.GET.get('lat_longs',None).encode('ascii','ignore')
+    except:
+        newsearch_params.lat_longs = None
+    """
+    newsearch_params.preference = request.GET.get('position',None)
+    newsearch_params.localities = request.GET.get('areas',None)
     newsearch_params.area = intC(request.GET.get('area',None))
     newsearch_params.config_type = request.GET.get('propertytype',None)
-    newsearch_params.save()
+#     if not (newsearch_params.lat_longs and newsearch_params.city):
+#         return "xyz"
+    if similar==0 :
+        newsearch_params.save()
     return newsearch_params
 
 def getSearchParamDict(newsearch_params):
@@ -59,10 +69,12 @@ def getSearchParamDict(newsearch_params):
     else:
         amenitiesList=[]
     search_params = []
-    if newsearch_params.lat_longs:
+    if newsearch_params.lati:
         localities_name = newsearch_params.localities.split(',')
-        lat_longs=newsearch_params.lat_longs.split(',')
-        for idx,lat_long in enumerate(lat_longs):
+#         lat_longs=newsearch_params.lat_longs.split(',')
+        latidudes = newsearch_params.lati.split(',')
+        longitudes = newsearch_params.longi.split(',')
+        for idx,latitude in enumerate(latidudes):
             search_param = {}
             search_param['Project_No']=None
             search_param['Project_config_No']=None
@@ -76,8 +88,8 @@ def getSearchParamDict(newsearch_params):
             search_param['Possession']=newsearch_params.possession
             search_param['PricePerUnit']=None
             search_param['amenities']=amenitiesList
-            search_param['Map_Latitude']=lat_long.split('|')[0]
-            search_param['Map_Longitude']=lat_long.split('|')[1]
+            search_param['Map_Latitude']=latidudes[idx]
+            search_param['Map_Longitude']=longitudes[idx]
             search_param['locality_name']=localities_name[idx]
             search_param['Config_Type'] = newsearch_params.config_type
             search_params.append(search_param)
@@ -98,6 +110,7 @@ def getSearchParamDict(newsearch_params):
         search_param['Map_Latitude']=None
         search_param['Map_Longitude']=None
         search_param['Config_Type'] = newsearch_params.config_type
+        search_param['locality_name']=None
 
         search_params.append(search_param)
     return search_params
@@ -169,43 +182,28 @@ def getNewSearchResults(request):
 def getNewSearchResultsModified(request):
     limit = int(request.GET.get('limit',10))
     propertytype = str(request.GET.get('propertytype','apartment')).lower()
-    
-    print 'limit ############',
-    print limit
     newsearch_params = getNewSearchResults1(request)
+    if newsearch_params == "xyz":
+        return {"message": "mandatory inputs not present",  "status": 3}
     search_params = getSearchParamDict(newsearch_params)
     input_weights = request.GET.get('input_weights',None)
-    
     pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
-    print "Past " , pastConfigs
-    
     pastConfigData = getProjectAttr(pastConfigs)
-    
     pastList = []
     for a in search_params:
         for pastCnfgDta in pastConfigData:
             if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
                 if pastCnfgDta["Project_Config_No"] not in pastList:
                     pastList.append(pastCnfgDta["Project_Config_No"])
-                    
-        
     pastConfigs = pastList
     pastConfigData = getProjectAttr(pastConfigs)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
-    
-    print "Reco Complete"
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
-    print "Rel Complete"
     relProjConfigId = getConfigId(relevantProperties)
-    print "relProjConfigId Complete"
     a = str(datetime.datetime.now())
-    
     MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
-    print "Inserted"
-
     relevantProperties =  relevantProperties[:limit]
     returnList = populateReturnList(relevantProperties)
-
     return returnList
     
 def getDistanceinKM(lat1,lon1,lat2,lon2):
@@ -282,11 +280,15 @@ def populateReturnList(returnList):
     method = "POST"
     handler = urllib2.HTTPHandler()
     opener = urllib2.build_opener(handler)
-     
-    url = "http://35.154.46.79/apimaster/mobile_v3/recoengine_web"
+    d = {}
+    d["Name"] = "Luke"
+    d["Country"] = "Canada"
     
+    print json.dumps(d, ensure_ascii=False)
+    url = "https://hdfcred.com/apimaster/mobile_v3/recoengine_web"
 #     data = {"data":[{"5230":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}, "11":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}}]}
     data = {"data": returnList}
+    print json.dumps(data["data"])
     request = urllib2.Request(url, data=json.dumps(data["data"]))
     request.add_header("Content-Type",'application/json')
     request.get_method = lambda: method
@@ -363,6 +365,11 @@ class NewReco(APIView):
         #return Response(getNewSearchResults(request))
         return Response(getNewSearchResultsModified(request))
 
+class SimilarProperties(APIView):
+    def get(self, request):    
+        #return Response(getNewSearchResults(request))
+        return Response(getSimilarProperties(request))
+
 def testRecoIds(request):
     ia = time.time()
     userId = request.GET.get('user',None)
@@ -416,3 +423,34 @@ def recoMailData(request,properties):
         recommendedProperties.append(AllProjectInfoMailerSerializer(recoProperty).data)
     return JSONResponse(recommendedProperties)
     
+    
+    
+    
+def getSimilarProperties(request):
+    limit = int(request.GET.get('limit',10))
+    propertytype = str(request.GET.get('propertytype','apartment')).lower()
+    newsearch_params = getNewSearchResults1(request,1)
+    if newsearch_params == "xyz":
+        return {"message": "mandatory inputs not present",  "status": 3}
+    search_params = getSearchParamDict(newsearch_params)
+    input_weights = request.GET.get('input_weights',None)
+    pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
+    pastConfigData = getProjectAttr(pastConfigs)
+    pastList = []
+    for a in search_params:
+        for pastCnfgDta in pastConfigData:
+            if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
+                if pastCnfgDta["Project_Config_No"] not in pastList:
+                    pastList.append(pastCnfgDta["Project_Config_No"])
+    pastConfigs = pastList
+    pastConfigData = getProjectAttr(pastConfigs)
+    recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
+    relProjConfigId = getConfigId(relevantProperties)
+    a = str(datetime.datetime.now())
+    
+    MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
+    relevantProperties =  relevantProperties[:limit]
+    returnList = populateReturnList(relevantProperties)
+    return returnList
+
