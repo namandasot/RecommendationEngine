@@ -435,6 +435,7 @@ def getSimilarProperties(request):
     search_params = getSearchParamDict(newsearch_params)
     input_weights = request.GET.get('input_weights',None)
     pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
+    pastConfigsCopy = pastConfigs
     pastConfigData = getProjectAttr(pastConfigs)
     pastList = []
     for a in search_params:
@@ -447,9 +448,13 @@ def getSimilarProperties(request):
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     relProjConfigId = getConfigId(relevantProperties)
-    a = str(datetime.datetime.now())
-    
-    MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
+    #a = str(datetime.datetime.now())
+    for a in relevantProperties:
+        for propName in a:
+            if a[propName]['Project_Config_No'] in pastConfigsCopy :
+                relevantProperties.remove(a)
+                
+    #MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
     relevantProperties =  relevantProperties[:limit]
     returnList = populateReturnList(relevantProperties)
     return returnList
