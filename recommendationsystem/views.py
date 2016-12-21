@@ -51,7 +51,7 @@ def getNewSearchResults1(request,similar=0):
     except:
         newsearch_params.lat_longs = None
     """
-    newsearch_params.preference = request.GET.get('position',None)
+    newsearch_params.preference = request.GET.get('position',"budget,location,bhk,possession,amenities")
     newsearch_params.localities = request.GET.get('areas',None)
     newsearch_params.area = intC(request.GET.get('area',None))
     newsearch_params.config_type = request.GET.get('propertytype',None)
@@ -190,11 +190,14 @@ def getNewSearchResultsModified(request):
     pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
     pastConfigData = getProjectAttr(pastConfigs)
     pastList = []
-    for a in search_params:
-        for pastCnfgDta in pastConfigData:
-            if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
-                if pastCnfgDta["Project_Config_No"] not in pastList:
-                    pastList.append(pastCnfgDta["Project_Config_No"])
+    try:
+        for a in search_params:
+            for pastCnfgDta in pastConfigData:
+                if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
+                    if pastCnfgDta["Project_Config_No"] not in pastList:
+                        pastList.append(pastCnfgDta["Project_Config_No"])
+    except:
+        pass
     pastConfigs = pastList
     pastConfigData = getProjectAttr(pastConfigs)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
