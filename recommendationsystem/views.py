@@ -426,9 +426,15 @@ def getSimilarProperties(request):
         return {"message": "mandatory inputs not present",  "status": 3}
     search_params = getSearchParamDict(newsearch_params)
     input_weights = request.GET.get('input_weights',None)
+    currTime = time.time()
+    print "Init1Time " ,currTime-start
+
     pastConfigs = getPastConfig(newsearch_params.userId,"2016-01-01")
     pastConfigsCopy = pastConfigs
     pastConfigData = getProjectAttr(pastConfigs)
+    currTime = time.time()
+    print "InitTime " ,currTime-start
+
     pastList = []
     for a in search_params:
         for pastCnfgDta in pastConfigData:

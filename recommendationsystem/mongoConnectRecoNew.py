@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from bson.timestamp import Timestamp
-
+import time
 
 class MongoConnectionForWebsite:
 
@@ -14,14 +14,13 @@ class MongoConnectionForWebsite:
 
     def getFootprint(self, uniqueCookieId,date='2016-01-01'):
         uniqueElement = "unique_cookie_id"
-        result = self.collection.find({ "data_storage_element" : "project_opened",uniqueElement : uniqueCookieId, "project_config_no" :{ "$exists": "true" },"tsDate":{"$gt": date}},{"unique_cookie_id" :1,"project_config_no" :1,"tsDate" :1 })
-        result = result.sort("tsDate",-1)
+        result = list(self.collection.find({ "data_storage_element" : "project_opened",uniqueElement : uniqueCookieId, "project_config_no" :{ "$exists": "true" },"tsDate":{"$gt": date}},{"unique_cookie_id" :1,"project_config_no" :1,"tsDate" :1 }).sort("tsDate",-1).limit(9))
         propertyArray = []
-        result = result.limit(20)
+#         result = result.limit(20)
         for post in result:
-            projectNo = post['project_config_no']
+            projectConfigNo = post['project_config_no']
             try:
-                propertyArray.append(int(projectNo))
+                propertyArray.append(int(projectConfigNo))
             except:
                 pass
         return propertyArray[:10]
