@@ -22,7 +22,6 @@ class KNN_Search:
             if i <= 7:
                 distance_sum = distance_sum + weights[i+1] * vector
         distance_sum_sorted_index = distance_sum.argsort()
-        print len(distance_sum_sorted_index)
 
         return distance_sum_sorted_index,sorted(distance_sum)
 

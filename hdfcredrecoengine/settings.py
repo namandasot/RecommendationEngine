@@ -25,9 +25,9 @@ HOSTPASWD = 'ITadmin'
 SECRET_KEY = 'z1k(haoz!(s%5idf2lszz2oj*8f@wxyl81@xmxu0t7s#hvn*ty'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

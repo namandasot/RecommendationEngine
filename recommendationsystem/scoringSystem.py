@@ -75,8 +75,6 @@ class scroingSystemForWebsite:
 		
 		if(searchParams[0][self.Config_Type]):
 			self.configFilter(searchParams,recoPropAttrList)
-
-		print projectNo
 # 		print "locationScore " ,len(locationScore)
 # 		print "amenitiesScore " , len(amenitiesScore)
 # 		print "budgetScores ",len(budgetScore)

@@ -42,7 +42,6 @@ def getNewSearchResults1(request,similar=0):
     newsearch_params.budget = intC(request.GET.get('budget',None))
     cityId = request.GET.get('cityid','3')
     newsearch_params.city = cityDict[str(cityId)].lower()
-    print newsearch_params.city
     possession = intC(request.GET.get('possession',0))
     try:
         newsearch_params.possession = possessionDict[possession]
@@ -139,17 +138,12 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
     preferanceList = newsearch_params.preference.split(',')
     pastPropInfoList = []
     recoPropInfoList = []
-    print "Done1"
     for recoProperties in recommendedProperties:
         recoPropInfoList.extend(recoProperties)
     recoPropAttrList = getProjectAttr(recoPropInfoList)
-    for a in recoPropAttrList[0]:
-        print a , recoPropAttrList[0][a]
-    print "Done " , past
     for a in past:
         pastPropInfoList.append(a["Project_Config_No"])
     pastConfigData = getProjectAttr(pastPropInfoList)
-    print "Not Done"
     relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
     #relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
     relevantProperties = filterSameProjectNo(relevantProperties)
@@ -177,8 +171,6 @@ def getPastConfig(userId,date):
 
 def getNewSearchResults(request):
     limit = int(request.GET.get('limit',20))
-    print 'limit ############',
-    print limit
     newsearch_params = getNewSearchResults1(request)
     search_params = getSearchParamDict(newsearch_params)
     input_weights = request.GET.get('input_weights',None)
@@ -272,7 +264,6 @@ def getNewSearchResultsFootPrintModified(request):
     i =0
     returnList = []
     returnListConfig = []
-    print "relProjConfigId ", relProjConfigId
     for prop,propAtr in zip(relProjConfigId,relevantProperties):
         if prop not in pastShownData:
             returnList.append(propAtr)
@@ -280,7 +271,6 @@ def getNewSearchResultsFootPrintModified(request):
             
         if len(returnListConfig) >= limit:
             break
-    print returnListConfig
     totalProp = returnListConfig + pastShownData
     
     a = str(datetime.datetime.now())
@@ -293,11 +283,9 @@ def populateReturnList(returnList):
     method = "POST"
     handler = urllib2.HTTPHandler()
     opener = urllib2.build_opener(handler)
-    print "returnList ",returnList
     url = "https://hdfcred.com/apimaster/mobile_v3/recoengine_web"
 #     data = {"data":[{"5230":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}, "11":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}}]}
     data = {"data": returnList}
-    print json.dumps(data["data"])
     request = urllib2.Request(url, data=json.dumps(data["data"]))
     request.add_header("Content-Type",'application/json')
     request.get_method = lambda: method
@@ -335,9 +323,7 @@ class NewSearch(APIView):
 
 
 def getProjectAttr(recoPropInfoList):
-    print "recoPropInfoList" , recoPropInfoList
     recommendedPropertiesAllData = list(AllProjectInfo.objects.filter(project_config_no__in=recoPropInfoList))
-    print recommendedPropertiesAllData
     recommendedPropertiesAllData.sort(key=lambda t: recoPropInfoList.index(t.pk))
     
     recommendedProperties = []
@@ -347,7 +333,6 @@ def getProjectAttr(recoPropInfoList):
             propDict['No_Of_Bedroom'] = float(str(propDict['No_Of_Bedroom']))
         except:
             propDict['No_Of_Bedroom'] = 0
-#         print propDict['No_Of_Bedroom']
         propDict['Possession'] = getPossessionDays(propDict['Possession'])
         propDict['locality_name'] = propDict['Project_Area_Name'] +', '+ propDict['Project_Suburb_Name'] +', ' +propDict['Project_City_Name']
         if propDict['amenities']:
@@ -382,23 +367,18 @@ class SimilarProperties(APIView):
 def testRecoIds(request):
     ia = time.time()
     userId = request.GET.get('user',None)
-    print userId
     
 #     propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
     propertyListInt = MCFW.getFootprint(userId)
-    print '///////////////////////////////'
-    print 'Mongo Loading time', time.time() - ia
     
     b = time.time() 
     recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
-    print 'Recommendation time', time.time() - b
     return recoIds(request,recommendedProperties)
 
 '''No use now'''
 def getProjectIds(request, userId):
     
     properties=request.GET.get('properties',None)
-    print properties
     propertyListInt = []
     propertiesList = properties.split(",")
     for project in propertiesList:
@@ -417,7 +397,6 @@ def recoIds(request,properties):
 
 def mailer(request):
     userId = request.GET.get('user',None)
-    print userId
     
     propertyListInt = MCFW.getFootprint(userId)
     recommendedProperties = DC.get_recommendations(propertyListInt)[:4]
@@ -436,6 +415,9 @@ def recoMailData(request,properties):
     
     
 def getSimilarProperties(request):
+    start= time.time()
+    currTime = time.time()
+    print currTime-start
     limit = request.GET.get('limit','0,10')
     limit = int(limit.split(',')[1])
     propertytype = str(request.GET.get('propertytype','apartment')).lower()
@@ -454,20 +436,30 @@ def getSimilarProperties(request):
                 if pastCnfgDta["Project_Config_No"] not in pastList:
                     pastList.append(pastCnfgDta["Project_Config_No"])
     pastConfigs = pastList
-    print "pastList ",pastList
     pastConfigData = getProjectAttr(pastConfigs)
+    currTime = time.time()
+    print "InitTime " ,currTime-start
+
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
+    currTime = time.time()
+    print "RecoTime " ,currTime-start
+
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     relProjConfigId = getConfigId(relevantProperties)
-    print "relProjConfigId" , relProjConfigId
     #a = str(datetime.datetime.now())
+    currTime = time.time()
+    print "RelTime " ,currTime-start
+
     for a in relevantProperties:
         for propName in a:
             if a[propName]['Project_Config_No'] in pastConfigs :
                 relevantProperties.remove(a)
-                
+    currTime = time.time()
+    print "RelTime " ,currTime-start
     #MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
     relevantProperties =  relevantProperties[:limit]
     returnList = populateReturnList(relevantProperties)
+    currTime = time.time()
+    print "EndTime " ,currTime-start
     return returnList
 

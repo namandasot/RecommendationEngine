@@ -409,7 +409,7 @@ if __name__ == '__main__':
     #search_parameters = [{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.827567000000000","Project_config_No":None,"Map_Latitude":"19.194291000000000","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.832754686438760","Project_config_No":None,"Map_Latitude":"19.206685585502232","No_Of_Balconies":None},{"Category":None,"Built_Up_Area":900,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":9000000,"PricePerUnit":None,"No_Of_Bedroom":2,"Possession":90,"Project_City_Name":"mumbai","amenities":["Swimming Pool","Gym"],"Map_Longitude":"72.852032000000000","Project_config_No":None,"Map_Latitude":"19.221384000000000","No_Of_Balconies":None}]
     a = time.time()
     s= [{"Category":None,"Built_Up_Area":None,"Project_No":None,"No_Of_Bathroom":None,"Minimum_Price":6000000,"PricePerUnit":None,"No_Of_Bedroom":3,"Possession":0,"Project_City_Name":"pune","amenities":["Swimming Pool","Gym"],"Map_Longitude":"73.9367","Project_config_No":None,"Map_Latitude":"18.5204","No_Of_Balconies":None}]
-    print DC.develop_dummy_listing(s, [], pref_list)
+#     print DC.develop_dummy_listing(s, [], pref_list)
     print "Done"
 
     # b = DC.get_recommendations(lis)
