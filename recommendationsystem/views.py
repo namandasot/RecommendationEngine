@@ -17,7 +17,8 @@ import urllib2
 import urllib
 import json
 
-
+cityDict = {'1':'Mumbai','3':'Bangalore','4':'Hyderabad','6':'Chennai','7':'Delhi','10':'Pune','11':'Nashik','13':'Aurangabad','14':'Meerut','15':'Mysore','16':'Agra','17':'Ahmedabad','20':'Lucknow','21':'Kanpur','23':'Kolkata','26':'Bhubaneswar','30':'Vadodara','31':'Jaipur','32':'Indore','38':'Durgapur','39':'Bhopal','40':'Guwahati','41':'Chandigarh','71':'Jamshedpur','77':'Mangalore','136':'Jodhpur','169':'Siliguri','170':'Kerala','172':'Karnal','175':'Chikkamagaluru'}
+possessionDict = {0:1,1:75,2:150,3:320,4:640,5:980,6:1280}
 Scoring = scroingSystemForWebsite()
 DC = DataCleaner()  # to be moved to class based views
 MCFW = MongoConnectionForWebsite()  # to be moved to class based views
@@ -39,8 +40,14 @@ def getNewSearchResults1(request,similar=0):
     newsearch_params = NewSearchParams()
     newsearch_params.userId = request.GET.get('user_cookie_id',None)
     newsearch_params.budget = intC(request.GET.get('budget',None))
-    newsearch_params.city = request.GET.get('city',None)
-    newsearch_params.possession = intC(request.GET.get('possession',None))
+    cityId = request.GET.get('cityid','3')
+    newsearch_params.city = cityDict[str(cityId)].lower()
+    print newsearch_params.city
+    possession = intC(request.GET.get('possession',0))
+    try:
+        newsearch_params.possession = possessionDict[possession]
+    except:
+        newsearch_params.possession = None
     newsearch_params.bhk = intC(request.GET.get('bhk',None))
     newsearch_params.amenities = request.GET.get('amenityid',None)
     newsearch_params.lati = request.GET.get('lat',None)
@@ -180,7 +187,8 @@ def getNewSearchResults(request):
     return relevantProperties[:limit]
 
 def getNewSearchResultsModified(request):
-    limit = int(request.GET.get('limit',10))
+    limit = request.GET.get('limit','0,10')
+    limit = int(limit.split(',')[1])
     propertytype = str(request.GET.get('propertytype','apartment')).lower()
     newsearch_params = getNewSearchResults1(request)
     if newsearch_params == "xyz":
@@ -223,7 +231,8 @@ def getDistanceinKM(lat1,lon1,lat2,lon2):
 
 
 def getNewSearchResultsFootPrint(request):
-    limit = request.GET.get('limit',20)
+    limit = request.GET.get('limit',[0,10])
+    limit = int(limit[1])
     userId = request.GET.get('user_cookie_id',None)
     newsearch_params = NewSearchParams.objects.get(userId=userId)
     search_params = getSearchParamDict(newsearch_params)
@@ -235,7 +244,8 @@ def getNewSearchResultsFootPrint(request):
     return relevantProperties
 
 def getNewSearchResultsFootPrintModified(request):
-    limit = request.GET.get('limit',10)
+    limit = request.GET.get('limit','0,10')
+    limit = int(limit.split(',')[1])
     userId = request.GET.get('user_cookie_id',None)
     newsearch_params = NewSearchParams.objects.get(userId=userId)
     search_params = getSearchParamDict(newsearch_params)
@@ -283,11 +293,7 @@ def populateReturnList(returnList):
     method = "POST"
     handler = urllib2.HTTPHandler()
     opener = urllib2.build_opener(handler)
-    d = {}
-    d["Name"] = "Luke"
-    d["Country"] = "Canada"
-    
-    print json.dumps(d, ensure_ascii=False)
+    print "returnList ",returnList
     url = "https://hdfcred.com/apimaster/mobile_v3/recoengine_web"
 #     data = {"data":[{"5230":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}, "11":{"relevance_score":{"possession":{"text":"\"This home is Ready for Possession\""}},"Project_Config_No":"285"}}]}
     data = {"data": returnList}
@@ -430,7 +436,8 @@ def recoMailData(request,properties):
     
     
 def getSimilarProperties(request):
-    limit = int(request.GET.get('limit',10))
+    limit = request.GET.get('limit','0,10')
+    limit = int(limit.split(',')[1])
     propertytype = str(request.GET.get('propertytype','apartment')).lower()
     newsearch_params = getNewSearchResults1(request,1)
     if newsearch_params == "xyz":
@@ -447,10 +454,12 @@ def getSimilarProperties(request):
                 if pastCnfgDta["Project_Config_No"] not in pastList:
                     pastList.append(pastCnfgDta["Project_Config_No"])
     pastConfigs = pastList
+    print "pastList ",pastList
     pastConfigData = getProjectAttr(pastConfigs)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     relProjConfigId = getConfigId(relevantProperties)
+    print "relProjConfigId" , relProjConfigId
     #a = str(datetime.datetime.now())
     for a in relevantProperties:
         for propName in a:
