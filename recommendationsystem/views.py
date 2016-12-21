@@ -451,7 +451,7 @@ def getSimilarProperties(request):
     #a = str(datetime.datetime.now())
     for a in relevantProperties:
         for propName in a:
-            if a[propName]['Project_Config_No'] in pastConfigsCopy :
+            if a[propName]['Project_Config_No'] in pastConfigs :
                 relevantProperties.remove(a)
                 
     #MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
