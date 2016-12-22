@@ -58,6 +58,7 @@ def getNewSearchResults1(request,similar=0):
         newsearch_params.lat_longs = None
     """
     newsearch_params.preference = request.GET.get('position',"budget,location,bhk,possession,amenities")
+    newsearch_params.preference = newsearch_params.preference.replace("size","bhk")
     newsearch_params.localities = request.GET.get('areas',None)
     newsearch_params.area = intC(request.GET.get('area',None))
     newsearch_params.config_type = request.GET.get('propertytype',None)
