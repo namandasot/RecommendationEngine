@@ -51,18 +51,15 @@ def getNewSearchResults1(request,similar=0):
     newsearch_params.amenities = request.GET.get('amenityid',None)
     newsearch_params.lati = request.GET.get('lat',None)
     newsearch_params.longi = request.GET.get('long',None)
-    """
-    try:
-        newsearch_params.lat_longs = request.GET.get('lat_longs',None).encode('ascii','ignore')
-    except:
-        newsearch_params.lat_longs = None
-    """
     newsearch_params.preference = request.GET.get('position',"budget,location,bhk,possession,amenities")
     newsearch_params.preference = newsearch_params.preference.replace("size","bhk")
     newsearch_params.localities = request.GET.get('areas',None)
     newsearch_params.area = intC(request.GET.get('area',None))
     newsearch_params.config_type = request.GET.get('propertytype',None)
 #     if not (newsearch_params.lat_longs and newsearch_params.city):
+    if newsearch_params.lati:
+        if not newsearch_params.localities:
+            newsearch_params.localities = newsearch_params.city 
 #         return "xyz"
     if similar==0 :
         newsearch_params.save()
@@ -97,7 +94,10 @@ def getSearchParamDict(newsearch_params):
             search_param['amenities']=amenitiesList
             search_param['Map_Latitude']=latidudes[idx]
             search_param['Map_Longitude']=longitudes[idx]
-            search_param['locality_name']=localities_name[idx]
+            try:
+                search_param['locality_name']=localities_name[idx]
+            except:
+                search_param['locality_name']=localities_name[0]
             search_param['Config_Type'] = newsearch_params.config_type
             search_params.append(search_param)
     else:
@@ -239,30 +239,25 @@ def getNewSearchResultsFootPrint(request):
 def getNewSearchResultsFootPrintModified(request):
     limit = request.GET.get('limit','0,10')
     limit = int(limit.split(',')[1])
+    
     userId = request.GET.get('user_cookie_id',None)
     newsearch_params = NewSearchParams.objects.get(userId=userId)
     search_params = getSearchParamDict(newsearch_params)
     pastConfigs = getPastConfig(userId,"2016-01-01")
     input_weights = request.GET.get('input_weights',None)
     pastConfigData = getProjectAttr(pastConfigs)
-
     pastList = []
     for a in search_params:
         for pastCnfgDta in pastConfigData:
             if getDistanceinKM(a['Map_Latitude'], a['Map_Longitude'], pastCnfgDta['Map_Latitude'], pastCnfgDta['Map_Longitude']) < 8:
                 if pastCnfgDta["Project_Config_No"] not in pastList:
                     pastList.append(pastCnfgDta["Project_Config_No"])
-                    
-        
     pastConfigs = pastList
     pastConfigData = getProjectAttr(pastConfigs)
-
-    
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
     relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
     pastShownData = MCFW.getFromMongo(userId)
     relProjConfigId = getConfigId(relevantProperties)
-    i =0
     returnList = []
     returnListConfig = []
     for prop,propAtr in zip(relProjConfigId,relevantProperties):
@@ -273,7 +268,6 @@ def getNewSearchResultsFootPrintModified(request):
         if len(returnListConfig) >= limit:
             break
     totalProp = returnListConfig + pastShownData
-    
     a = str(datetime.datetime.now())
     MCFW.insertToMongo(totalProp , userId,a)
     returnList = populateReturnList(returnList)
@@ -358,8 +352,14 @@ def intC(temp):
 class NewReco(APIView):
     def get(self, request):    
         #return Response(getNewSearchResults(request))
-        return Response(getNewSearchResultsModified(request))
-
+        limit1 = request.GET.get('limit','0,10')
+        limit1 = int(limit1.split(',')[0])
+        if limit1 ==0:
+            return Response(getNewSearchResultsModified(request))
+        else:
+            return Response(getNewSearchResultsFootPrintModified(request))
+        
+        
 class SimilarProperties(APIView):
     def get(self, request):    
         #return Response(getNewSearchResults(request))

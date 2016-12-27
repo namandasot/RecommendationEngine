@@ -1,7 +1,7 @@
 '''
 Created on 15-Oct-2015
 
-@author: prateek
+@author: Naman
 '''
 from django.conf.urls import url
 from recommendationsystem import views
