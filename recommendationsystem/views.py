@@ -39,7 +39,7 @@ def getPossessionDays(possessionDate):
 def getNewSearchResults1(request,similar=0):
     newsearch_params = NewSearchParams()
     newsearch_params.userId = request.GET.get('user_cookie_id',None)
-    newsearch_params.budget = intC(request.GET.get('budget',None))
+    newsearch_params.budget = floatC(request.GET.get('budget',None))
     cityId = request.GET.get('cityid','3')
     newsearch_params.city = cityDict[str(cityId)].lower()
     possession = intC(request.GET.get('possession',0))
@@ -346,6 +346,10 @@ class JSONResponse(HttpResponse):
 
 def intC(temp):
     no = int(temp) if temp else None
+    return no
+
+def floatC(temp):
+    no = float(temp) if temp else None
     return no
 
 
