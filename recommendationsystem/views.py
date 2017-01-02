@@ -47,7 +47,7 @@ def getNewSearchResults1(request,similar=0):
         newsearch_params.possession = possessionDict[possession]
     except:
         newsearch_params.possession = None
-    newsearch_params.bhk = intC(request.GET.get('bhk',None))
+    newsearch_params.bhk = floatC(request.GET.get('bhk',None))
     newsearch_params.amenities = request.GET.get('amenityid',None)
     newsearch_params.lati = request.GET.get('lat',None)
     newsearch_params.longi = request.GET.get('long',None)
@@ -469,8 +469,8 @@ def getSimilarProperties(request):
     print "RelTime " ,currTime-start
     #MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
     relevantProperties =  relevantProperties[:limit]
-    returnList = populateReturnList(relevantProperties)
+#     returnList = populateReturnList(relevantProperties)
     currTime = time.time()
     print "EndTime " ,currTime-start
-    return returnList
+    return relevantProperties
 
