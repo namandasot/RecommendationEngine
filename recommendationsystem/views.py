@@ -63,6 +63,8 @@ def getNewSearchResults1(request,similar=0):
 #         return "xyz"
     if similar==0 :
         newsearch_params.save()
+    newsearch_params.currPage = request.GET.get('page','normal')
+
     return newsearch_params
 
 def getSearchParamDict(newsearch_params):
@@ -134,7 +136,7 @@ def getRecom(search_params,prefList,past,input_weights):
         recommendedProperties = DC.develop_dummy_listing(search_paramsCopy, pastCopy, prefListCopy)
     return recommendedProperties
 
-def getRel(newsearch_params,search_params,recommendedProperties,past):
+def getRel(newsearch_params,search_params,recommendedProperties,past,currPage="Normal"):
     searchParams = search_params
     preferanceList = newsearch_params.preference.split(',')
     pastPropInfoList = []
@@ -145,7 +147,7 @@ def getRel(newsearch_params,search_params,recommendedProperties,past):
     for a in past:
         pastPropInfoList.append(a["Project_Config_No"])
     pastConfigData = getProjectAttr(pastPropInfoList)
-    relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList)
+    relevantProperties = Scoring.getScores(searchParams,pastConfigData,recoPropAttrList,preferanceList,currPage)
     #relevantProperties = sorted(relevantProperties, key=lambda k: k['relevance_score']['total_score'],reverse=True)
     relevantProperties = filterSameProjectNo(relevantProperties)
     return relevantProperties
@@ -163,7 +165,7 @@ def filterSameProjectNo(relevantProperties):
             if rp not in projectNo:
                 projectNo.append(rp) 
                 relevantPropertiesFiltered.append(rap)
-            
+        
             
     return relevantPropertiesFiltered
 
@@ -202,7 +204,7 @@ def getNewSearchResultsModified(request):
     pastConfigs = pastList
     pastConfigData = getProjectAttr(pastConfigs)
     recommendedProperties = getRecom(search_params, newsearch_params.preference.split(','),pastConfigs,input_weights)
-    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData)
+    relevantProperties = getRel(newsearch_params,search_params,recommendedProperties,pastConfigData,newsearch_params.currPage)
     relProjConfigId = getConfigId(relevantProperties)
     a = str(datetime.datetime.now())
     MCFW.insertToMongo(relProjConfigId[:limit] , newsearch_params.userId,a)
@@ -307,6 +309,11 @@ def getConfigId(propDictArray):
 #             configArr.append(ele["Project_Config_No"])
     return configArr
 
+def testRecoIds(request):
+    userId = request.GET.get('user',None)
+    propertyListInt = MCFW.getFootprint(userId)
+    recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
+    return recoIds(request,recommendedProperties)
 
     
 
@@ -369,20 +376,7 @@ class SimilarProperties(APIView):
         #return Response(getNewSearchResults(request))
         return Response(getSimilarProperties(request))
 
-def testRecoIds(request):
-    ia = time.time()
-    userId = request.GET.get('user',None)
-    
-#     propertyListInt = getProjectIds(request, userId)    #change it to mongodb function
-    propertyListInt = MCFW.getFootprint(userId)
-    
-    b = time.time() 
-    recommendedProperties = DC.get_recommendations(propertyListInt)[:10]
-    return recoIds(request,recommendedProperties)
-
-'''No use now'''
 def getProjectIds(request, userId):
-    
     properties=request.GET.get('properties',None)
     propertyListInt = []
     propertiesList = properties.split(",")

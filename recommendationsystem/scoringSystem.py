@@ -41,11 +41,12 @@ class scroingSystemForWebsite:
 		self.fiveYear = 1900
 		self.scoreScaling = 10.0
 		self.scoringMinLocation = -25.0
+		self.priceUpperThreshold = 1.5
 		self.filterArray = [1]
 
 	# Search Params : 
 
-	def getScores(self,searchParams,pastPropAttrList,recoPropAttrList,preferanceList ):
+	def getScores(self,searchParams,pastPropAttrList,recoPropAttrList,preferanceList ,currPage="Normal"):
 
 
 		# First, scores will be calculated out of 100 and then changed according to their order
@@ -63,7 +64,7 @@ class scroingSystemForWebsite:
 
 		""" BUDGET """
 		if(searchParams[0][self.budget]):
-			budgetScore = self.getBudgetScore(searchParams,pastPropAttrList,recoPropAttrList)
+			budgetScore = self.getBudgetScore(searchParams,pastPropAttrList,recoPropAttrList,currPage)
 
 		""" BHK """
 		if(searchParams[0][self.bhk]):
@@ -255,7 +256,7 @@ class scroingSystemForWebsite:
 		return bhkScoreList
 
 
-	def getBudgetScore(self,searchParams,pastPropAttrList,recoPropAttrList):
+	def getBudgetScore(self,searchParams,pastPropAttrList,recoPropAttrList,currPage="Normal"):
 		searchBudget = searchParams[0][self.budget]
 		pastBudget = map (lambda x:x[self.price],pastPropAttrList)
 		recoBudget = map (lambda x:x[self.price],recoPropAttrList)
@@ -268,6 +269,11 @@ class scroingSystemForWebsite:
 		budgetScoreList  = []
 		flag = 0
 		text = ""
+		tempUpperThresh = self.priceUpperThreshold
+		if currPage=="emisearch":
+			tempUpperThresh = 1
+			
+
 		for enumi,price in enumerate(recoBudget):
 			score = 0
 			flag = 0
@@ -297,7 +303,7 @@ class scroingSystemForWebsite:
 					score = min(score,self.scoringMax)
 					score = max(score,self.scoringMin)
 					# print price
-					if((budgetMean + budgetStd/2 ) * 1.5 < price):
+					if((budgetMean + budgetStd/2 ) * tempUpperThresh < price):
 						self.filterArray[enumi] = 0
 						# print "x"
 
